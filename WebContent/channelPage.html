@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta name="description" content="MyTube - By Milos Pavicic" />
+      <meta charset=utf-8 content="width=device-width, initial-scale=1 maximum-scale=1, user-scalable=no">
+      <title>MyTube - The Origin of Entertainment</title>
+      <script src="js/jquery-2.1.4.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>
+      <script src="bootstrap/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="css/channelPage.css">
+      <link rel="stylesheet" type="text/css" href="css/nav.css">
+      <script src="js/nav.js" type="text/javascript"></script>
+      <script src="js/channelPage.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#toggleMenu" id="mytoggle">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>                        
+                    </button>
+                    <a class="navbar-brand" href="index.html">MyTube</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="toggleMenu">
+                    <form class="navbar-form navbar-left" role="search" action="searchPage.html">
+                        <div class="form-group-sm">
+                            <div class="input-group" id="searchBarNav">
+                                <input type="text" class="form-control" placeholder="Search" autocomplete="off" id="searchParameter">
+                                <span class="input-group-btn"><button class="btn btn-danger btn-sm" id="searchSubmit">Submit</button></span>
+                            </div>
+                        </div>
+                    </form>
+                
+                    <ul class="nav navbar-nav navbar-right" id="navbarNotLoggedIn">
+                        <li><a  data-toggle="modal" href="#login-modal" ><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        <li><a  data-toggle="modal" href="#register-modal"><span class="glyphicon glyphicon-user" ></span> Register</a></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-cog"></span> Options</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" target="_self">Help</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                  
+                    <ul class="nav navbar-nav navbar-right" id="navbarLoggedIn">
+                        <li><a href="#"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
+                        <li class="dropdown">
+                            <!-- Link koji otvara dropdown listu -->
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameTab"></a>
+                            <!-- Lista koja se pojavljuje i sakriva na klik -->
+                            <ul class="dropdown-menu" id="mainDropdown">
+                                <li><a href="usersPage.html" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+                                <li><a href="channelPage.html" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
+                                <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-time"></span> History</a></li>
+                                <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-thumbs-up"></span> Liked</a></li>
+                                <li><a data-toggle="collapse" href="#playlists" id="playlistCollapse"><span class="glyphicon glyphicon-th-list"></span> Playlists<span class="caret"></span></a>
+                                    <ul id="playlists" class="panel-collapse collapse itemInListCollapse">
+                                        <li class="list-group-item"><a href="#">Javascript step by step</a></li>
+                                        <li class="list-group-item"><a href="#">Pop 80's</a></li>
+                                        <li class="list-group-item"><a href="#">Fails Playlist</a></li>
+                                        <li class="list-group-item"><a href="#">Ex Yu Rock</a></li>
+                                        <li class="list-group-item"><a href="#">Summer hits 2018</a></li>
+                                        <li class="list-group-item"><a href="#">TedX</a></li>
+                                    </ul>
+                                </li>
+                                <li><a data-toggle="collapse" href="#following" id="followingCollapse"><span class="glyphicon glyphicon-king"> </span> Following<span class="caret"></span></a>
+                                    <ul id="following" class="panel-collapse collapse itemInListCollapse list-group">
+                                        <li class="list-group-item"><a href="channelPage.html">thenewboston</a></li>
+                                        <li class="list-group-item"><a href="channelPage.html">Eminem</a></li>
+                                        <li class="list-group-item"><a href="channelPage.html">AC/DC</a></li>
+                                        <li class="list-group-item"><a href="channelPage.html">LifeHacks</a></li>
+                                        <li class="list-group-item"><a href="channelPage.html">FailArmy</a></li>
+                                        <li class="list-group-item"><a href="channelPage.html">Eminem</a></li>
+                                    </ul>
+                                </li>   
+                            </ul>
+                        </li>
+                              
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-cog"></span> Options<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" target="_self"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
+                                <li><a target="_self" data-toggle="modal" href="#logoutModal"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                   
+                </div>
+            </div>
+        </nav>
+        <div class="modal fade" id="login-modal">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <!-- header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Login Form</h3>
+                    </div>
+                    <!-- body -->
+                    <div class="modal-header">
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="username" name="uname" id="usernameLogin" class="form-control" placeholder="Username" required/>
+                                <input type="password" name="passw" id="passwordLogin" class="form-control" placeholder="Password" required/>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block" id="logInSubmit">Log In</button>
+                        <p>Or</p>
+                        <button class="btn btn-default btn-block" data-toggle="modal" href="#register-modal" data-dismiss="modal">Register</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="register-modal">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <!-- header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Register Form</h3>
+                    </div>
+                    <!-- body -->
+                    <div class="modal-header">
+                        <form action="RegisterServlet" method="post">
+                            <div class="form-group">
+                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username" required/>
+                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password" required/>
+                                <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" required/>
+                                <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" required/>
+                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email" required/>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block" id="registerSubmit">Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="badLoginModal" role="dialog">
+            <div class="modal-dialog">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 class="modal-title">Login failed.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Wrong username or password.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="logoutModal" role="dialog" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    </div>
+                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-danger" href="index.html" onclick="logout()">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="reportModal" role="dialog" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    </div>
+                    <div class="modal-body">Select "Report" below if you are want to report this channel.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-danger" href="index.html" data-dismiss="modal">Report</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="blockModal" role="dialog" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    </div>
+                    <div class="modal-body">Select "Block" below if you are want to block this channel.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-danger" href="index.html">Block</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="deleteModal" role="dialog" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    </div>
+                    <div class="modal-body">Select "Delete" below if you are want to delete this channel.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-danger" href="index.html">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mainDiv">
+            <div class="row">
+                <div class="col-md-12 col-sm-12" id="backgroundImage">
+                    <img id="bgImage"  src="pictures/channelBG.jpg" alt="Lights" style="width:100%;height: 100%">
+                </div>
+                <br>
+                <div class="col-md-12 col-sm-12 col-xs-12 thumbnail" id="infoAndOptions">
+                    <img id="profileImage" src="pictures/1.jpg" alt="Lights" style="width:80px;height: 80px">
+                    <ul id="nameAndFollowers" class="thumbnail">
+                        <li><h4>Test Name</h4></li>
+                        <li><p>234.234 followers</p></li>
+                    </ul>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12 btn-group dropdown" id="navButtons">
+                        <button id="followButton" type="button" class="btn btn-danger changeActive">Follow</button>
+                        <button id="userHomepage" type="button" class="btn btn-default active changeActive">Home</button>
+                        <button id="userVideos" type="button" class="btn btn-default changeActive">Videos</button>
+                        <button id="userPlaylists" type="button" class="btn btn-default changeActive">Playlists</button>
+                        <button id="userInfo" type="button" class="btn btn-default changeActive">Info</button>
+                        <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-option-horizontal"></span></button>
+                            <ul class="dropdown-menu" role="menu" id="optionsDropdown">
+                                <li id="deleteOptionChannel"><a href="#deleteModal" data-toggle="modal">Delete user</a></li>
+                                <li><a href="#blockModal" data-toggle="modal">Block user</a></li>
+                                <li><a href="#reportModal" data-toggle="modal">Report user</a></li>
+                                <li><a href="#">Send message</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12 col-sm-12 thumbnail" id="content">
+                    <div class="row">
+                        <div class="col-md-8 col-sm-12">
+                            <video id="welcomeVideo" src="videos/videoplayback.mp4" alt="video" width="100%" ></video>
+                            <div id="controls" class="">
+                                <button id="btnPlayPause" class="btn btn-default" title="play" accesskey="P" onclick="playPauseVideo();"><span class="glyphicon glyphicon-play"></span></button>
+                                <button id="btnStop" class="btn btn-default" title="stop" accesskey="X" onclick="stopVideo();"><span class="glyphicon glyphicon-stop"></span></button>
+                                <button id="btnReplay" class="btn btn-default" title="replay" accesskey="R" onclick="replayVideo();"><span class="glyphicon glyphicon-repeat"></span></button>
+                                <button id="btnMute" class="btn btn-default" title="mute" onclick="muteVolume();"><span class="glyphicon glyphicon-volume-off"></span></button>
+                            </div>
+                            <div class="caption">
+                                <p id="titleBar">'+title+'</p>
+                            </div>
+                            <p id="videoInfo">User<br>'+views+'<br>'+newDate+'</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer btn-danger text-light">
+              <p>Copyright ©, Made by Milos Pavicic   </p>
+        </footer>
+    </body>
+</html>
