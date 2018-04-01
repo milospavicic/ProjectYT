@@ -147,6 +147,73 @@
                 </div>
             </div>
         </div>
+        
+        <div class="modal fade" id="editComment-modal">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <!-- header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Edit comment</h3>
+                    </div>
+                    <!-- body -->
+                    <div class="modal-header">
+                        <form role="form">
+                            <div class="form-group">
+                               <textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="editCommentText" rows="4"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block" onclick="editCommentButton()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+         <div class="modal fade" id="editVideo-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Edit video</h3>
+                    </div>
+                    <!-- body -->
+                    <div class="modal-header">
+                    	<input type="text" id="editVideoName" class="form-control" placeholder="Title" required/>
+                    	<input type="text" id="editDescription" class="form-control" placeholder="Description" required/>
+                    	<input type="text" id="editPicUrl" class="form-control" placeholder="Picture url" required/>
+                    	<hr>
+                    	<p class="editVideoTitle">Visibility</p>
+                    	<select name="visibility" form="visibilityForm" class="editOption" id="selectOne">
+ 							 <option value="1">Public</option>
+ 							 <option value="2">Private</option>
+ 							 <option value="3">Unlisted</option>
+						</select>
+						<hr>
+						<p class="editVideoTitle">Comments enabled</p>
+                    	<select name="commAble" form="commAbleForm" class="editOption" id="selectTwo">
+ 							 <option value="1">Yes</option>
+ 							 <option value="2">No</option>
+						</select>
+						<hr>
+						<p class="editVideoTitle">Rating enabled</p>
+                    	<select name="ratAble" form="ratAbleForm" class="editOption" id="selectThree">
+ 							 <option value="1">Yes</option>
+ 							 <option value="2">No</option>
+						</select>
+                    </div>
+                    <!-- footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block" onclick="saveEditVideo()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
         <div class="modal fade" id="badLoginModal" role="dialog">
             <div class="modal-dialog">
                   <!-- Modal content-->
@@ -243,7 +310,7 @@
                                 <ul class="dropdown-menu" >
                                     <li id="deleteOptionVideo"><a href="#deleteModal" data-toggle="modal">Delete video</a></li>
                                     <li id="blockOptionVideo"><a href="#blockModal" data-toggle="modal">Block video</a></li>
-                                    <li id="editVideoOption"><a href="#" data-toggle="modal">Edit video</a></li>
+                                    <li id="editVideoOption"><a href="#editVideo-modal" data-toggle="modal">Edit video</a></li>
                                     <li><a href="#">Add to playlist</a></li>
                                 </ul>
                             </div>

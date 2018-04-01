@@ -217,6 +217,69 @@ public class VideoDAO {
 		}
 		return null;
 	}
+	public static ArrayList<Video> getVideosForUser(String userName,boolean queryType){
+		Connection conn = ConnectionMenager.getConnection();
+		ArrayList<Video> videos = new ArrayList<Video>();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		try {
+			if(queryType==false) {
+				String query = "SELECT * FROM video WHERE visibility = ? AND deleted = ? AND owner = ?";
+				pstmt = conn.prepareStatement(query);
+				pstmt.setString(1, "PUBLIC");
+				pstmt.setBoolean(2, false);
+				pstmt.setString(3, userName);
+			}else {
+				String query = "SELECT * FROM video WHERE (visibility = ? OR visibility = ?)  AND deleted = ? AND owner = ?";
+				pstmt = conn.prepareStatement(query);
+				pstmt.setString(1, "PUBLIC");
+				pstmt.setString(2, "PRIVATE");
+				pstmt.setBoolean(3, false);
+				pstmt.setString(4, userName);
+			}
+			
+			rset = pstmt.executeQuery();
+			while (rset.next()) {
+				int index = 1;
+				int id = rset.getInt(index++);
+				String videoUrl = rset.getString(index++);
+				String pictureUrl = rset.getString(index++);
+				String videoName = rset.getString(index++);
+				String description = rset.getString(index++);
+				Visibility visibility = Visibility.valueOf(rset.getString(index++));
+				boolean blocked = rset.getBoolean(index++);
+				boolean commentsEnabled = rset.getBoolean(index++);
+				boolean ratingEnabled = rset.getBoolean(index++);
+				int numberOfLikes = rset.getInt(index++);
+				int numberOfDislikes = rset.getInt(index++);
+				int views = rset.getInt(index++);
+				Date d = rset.getDate(index++);
+				String datePosted=UserDAO.dateToString(d);
+				String user = rset.getString(index++);
+				User owner = UserDAO.getUserByName(user);
+				boolean deleted = rset.getBoolean(index++);
+				Video newVideo = new Video(id, videoUrl, pictureUrl, videoName, description, visibility, blocked, commentsEnabled, ratingEnabled, numberOfLikes, numberOfDislikes, views, datePosted, owner, deleted);;
+				videos.add(newVideo);
+			}
+
+		} catch (Exception ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+		return videos;
+	}
+	
 	public static int getVideoCountForUser(String userName) {
 		Connection conn = ConnectionMenager.getConnection();
 		PreparedStatement pstmt = null;

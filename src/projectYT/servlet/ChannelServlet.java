@@ -13,46 +13,54 @@ import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import projectYT.dao.LikeDAO;
 import projectYT.dao.UserDAO;
 import projectYT.dao.VideoDAO;
 import projectYT.model.User;
 import projectYT.model.Video;
+import projectYT.model.User.UserType;
 
 
-public class GetVideosServlet extends HttpServlet {
+public class ChannelServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Ucitavanje videa zapoceto");
+		String channelName = request.getParameter("channelName");
 		HttpSession session = request.getSession();
-		ArrayList<Video> videos= null;
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		ArrayList<Video> videos = new ArrayList<Video>();
+		if(loggedInUser!=null) {
+			if(channelName.equals(loggedInUser.getUserName()) || loggedInUser.getUserType()==UserType.ADMIN) {
+				videos = VideoDAO.getVideosForUser(channelName, true);
+			}else {
+				videos = VideoDAO.getVideosForUser(channelName, false);
+			}
+		}else {
+			videos = VideoDAO.getVideosForUser(channelName, false);
+		}
 		
-		if(loggedInUser!= null) {
-			System.out.println(loggedInUser.getUserName()+" - loggedInUser");
-			if(loggedInUser.getUserType().toString().equals("ADMIN")) {
-				videos=VideoDAO.allVideos();
-			}
-			else {
-				videos =VideoDAO.publicVideos();
-			}
+		ArrayList<Integer> videoIds = LikeDAO.likedVideosByUser(channelName);
+		ArrayList<Video> likedVideos = new ArrayList<Video>();
+		for (Integer it : videoIds) {
+			likedVideos.add(VideoDAO.getVideo(it));
 		}
-		else {
-			videos =VideoDAO.publicVideos();
-		}
-		ArrayList<User> topSixChannels = null;
-		topSixChannels = UserDAO.getTopSixChannels();
+		User channel = UserDAO.getUserByName(channelName);
+		
 		Map<String, Object> data = new HashMap<>();
-		data.put("topSixChannels", topSixChannels);
 		data.put("videos", videos);
+		data.put("likedVideos", likedVideos);
+		data.put("channel", channel);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonData = mapper.writeValueAsString(data);
-		System.out.println("Zavrseno ucitavanje video: " +jsonData);
+		System.out.println("Channel servlet: " +jsonData);
 
 		response.setContentType("application/json");
 		response.getWriter().write(jsonData);
 	}
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

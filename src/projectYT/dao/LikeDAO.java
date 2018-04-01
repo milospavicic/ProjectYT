@@ -258,4 +258,37 @@ public class LikeDAO {
 		}
 		return null;
 	}
+	public static ArrayList<Integer> likedVideosByUser(String userName){
+		Connection conn = ConnectionMenager.getConnection();
+		ArrayList<Integer> likedVideos = new ArrayList<Integer>();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		try {
+			String query = "SELECT * FROM likedislikevideo AS A INNER JOIN likedislike AS B ON A.likeId=B.id WHERE owner=?;";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, userName);
+			rset = pstmt.executeQuery();
+			while (rset.next()) {
+				int videoId=rset.getInt(1);
+				likedVideos.add(videoId);
+			}
+			return likedVideos;
+		} catch (Exception ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+		return null;
+	}
+
 }

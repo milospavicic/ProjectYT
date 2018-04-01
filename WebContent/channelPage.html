@@ -234,9 +234,8 @@
 
                     <div class="col-md-12 col-sm-12 col-xs-12 btn-group dropdown" id="navButtons">
                         <button id="followButton" type="button" class="btn btn-danger changeActive">Follow</button>
-                        <button id="userHomepage" type="button" class="btn btn-default active changeActive">Home</button>
-                        <button id="userVideos" type="button" class="btn btn-default changeActive">Videos</button>
-                        <button id="userPlaylists" type="button" class="btn btn-default changeActive">Playlists</button>
+                        <button id="userVideos" type="button" class="btn btn-default active changeActive">Videos</button>
+                        <button id="userLiked" type="button" class="btn btn-default changeActive">Likes</button>
                         <button id="userInfo" type="button" class="btn btn-default changeActive">Info</button>
                         <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-option-horizontal"></span></button>
@@ -250,21 +249,9 @@
                     </div>
 
                 </div>
-                <div class="col-md-12 col-sm-12 thumbnail" id="content">
-                    <div class="row">
-                        <div class="col-md-8 col-sm-12">
-                            <video id="welcomeVideo" src="videos/videoplayback.mp4" alt="video" width="100%" ></video>
-                            <div id="controls" class="">
-                                <button id="btnPlayPause" class="btn btn-default" title="play" accesskey="P" onclick="playPauseVideo();"><span class="glyphicon glyphicon-play"></span></button>
-                                <button id="btnStop" class="btn btn-default" title="stop" accesskey="X" onclick="stopVideo();"><span class="glyphicon glyphicon-stop"></span></button>
-                                <button id="btnReplay" class="btn btn-default" title="replay" accesskey="R" onclick="replayVideo();"><span class="glyphicon glyphicon-repeat"></span></button>
-                                <button id="btnMute" class="btn btn-default" title="mute" onclick="muteVolume();"><span class="glyphicon glyphicon-volume-off"></span></button>
-                            </div>
-                            <div class="caption">
-                                <p id="titleBar">'+title+'</p>
-                            </div>
-                            <p id="videoInfo">User<br>'+views+'<br>'+newDate+'</p>
-                        </div>
+                <div class="col-md-12 col-sm-12 thumbnail" id="mainDiv" >
+                    <div class="row" id="content">
+                       
                     </div>
                 </div>
             </div>

@@ -50,16 +50,28 @@ public class CommentsServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int videoId = Integer.parseInt(request.getParameter("videoId"));
-		Video video = VideoDAO.getVideo(videoId);
+		HttpSession session = request.getSession();
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		String commentText = request.getParameter("commentText");
-		String loggedInUser = request.getParameter("loggedInUser");
-		User user = UserDAO.getUserByName(loggedInUser);
-		int newId = CommentDAO.getCommentId();
-		Date newDate = new Date();
-		String datePosted = UserDAO.dateToStringForWrite(newDate);
-		Comment newCommet = new Comment(newId, commentText, datePosted, user, video, 0, 0, false);
-		CommentDAO.addComment(newCommet);
+		String status = request.getParameter("status");
+		if(status.equals("new")) {
+			int videoId = Integer.parseInt(request.getParameter("videoId"));
+			Video video = VideoDAO.getVideo(videoId);
+			int newId = CommentDAO.getCommentId();
+			Date newDate = new Date();
+			String datePosted = UserDAO.dateToStringForWrite(newDate);
+			Comment newCommet = new Comment(newId, commentText, datePosted, loggedInUser, video, 0, 0, false);
+			CommentDAO.addComment(newCommet);
+			return;
+		}
+		
+		int commentId = Integer.parseInt(request.getParameter("commentId"));
+		
+		if(status.equals("edit")){
+			Comment commentForEdit = CommentDAO.getCommentForId(commentId);
+			commentForEdit.setText(commentText);
+			CommentDAO.updateComment(commentForEdit);
+		}
 	}
 
 }

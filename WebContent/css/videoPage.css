@@ -214,18 +214,12 @@
 #reportModal,#blockModal,#deleteModal{
     text-align: left;
 }
-.pagination{
-    margin-left: 25%;
-    
+
+.editVideoTitle{
+	text-align: left;
+	display:inline-block;
 }
-.pagination li a{
-    border-color: silver;
-    color: dimgray;
-}
-.pagination .active a{
-    color: white;
-    background-color: red;
-}
-.pagination .active a:hover{
-    background-color: darkred;
+.editOption{
+	text-align: left;
+	display:inline-block;
 }

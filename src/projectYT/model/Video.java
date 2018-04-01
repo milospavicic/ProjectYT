@@ -1,7 +1,5 @@
 package projectYT.model;
 
-import java.util.Date;
-
 public class Video {
 
 	public enum Visibility{PUBLIC, UNLISTED, PRIVATE};

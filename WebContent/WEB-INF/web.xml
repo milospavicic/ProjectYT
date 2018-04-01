@@ -122,4 +122,24 @@
     <servlet-name>LogoutServlet</servlet-name>
     <url-pattern>/LogoutServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>OwnerVideosServlet</display-name>
+    <servlet-name>OwnerVideosServlet</servlet-name>
+    <servlet-class>projectYT.servlet.OwnerVideosServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>OwnerVideosServlet</servlet-name>
+    <url-pattern>/OwnerVideosServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ChannelServlet</display-name>
+    <servlet-name>ChannelServlet</servlet-name>
+    <servlet-class>projectYT.servlet.ChannelServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChannelServlet</servlet-name>
+    <url-pattern>/ChannelServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

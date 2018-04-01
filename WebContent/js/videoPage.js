@@ -1,6 +1,9 @@
-var  loggedInUser = "";
+var loggedInUser = "";
+var editCommentId = 0;
+var editVideoId = 0;
 $(document).ready(function(e) {
 	var videoId = window.location.search.slice(1).split('&')[0].split('=')[1];
+	editVideoId = videoId;
     console.log("start of videoPage.js");
 	$.get('FollowUserServlet',{},function(dataOne){
 		$.get('VideoServlet',{"videoId":videoId},function(data){
@@ -22,6 +25,7 @@ $(document).ready(function(e) {
 				}
 			}else{
 				loggedInUser=data.user.userName;
+
 				if(data.video.blocked==true){
 					if(data.user.userType!="ADMIN" || data.video.owner.userName!=data.user.userName){
 						errorPage();
@@ -34,8 +38,17 @@ $(document).ready(function(e) {
 		            $('#myCommentButton').prop('disabled',true);
 		            $('#hideShowBtn').prop('disabled',true);
 				}
+				
+				console.log(data.video.owner.userName+"  "+data.user.userName)
+				if(data.video.owner.userName==data.user.userName){
+					$('#editVideoOption').show();
+					$('#deleteOptionVideo').hide();
+		            $('#myCommentButton').prop('disabled',false);
+		            $('#hideShowBtn').prop('disabled',false);
+		            $('#ldBtnGroup').show();
+				}
 			}
-						
+			fillEditVideo(data.video);			
 				
 			var videoName=$('#videoName');
 			var vCounter=$('#vCounter');
@@ -113,7 +126,7 @@ $(document).ready(function(e) {
             $(this).html(likes);
         }
         $(this).prop('disabled',true);
-        $.get('LikeVideoServlet',{"videoId":videoId,"loggedInUser":storedName,"status":"liked"},function(data){});
+        $.get('LikeVideoServlet',{"videoId":videoId,"status":"liked"},function(data){});
     });
     $('#dislikeButton').click(function() {
     	if(loggedInUser=="false"){
@@ -131,8 +144,9 @@ $(document).ready(function(e) {
             $(this).html(dislikes);
         }
         $(this).prop('disabled',true);
-        $.get('LikeVideoServlet',{"videoId":videoId,"loggedInUser":storedName,"status":"dislike"},function(data){});
+        $.get('LikeVideoServlet',{"videoId":videoId,"status":"dislike"},function(data){});
     });
+    //NEW COMMENT
     $('#myFormButton').click(function(){
     	if(loggedInUser=="false"){
     		$("#login-modal").modal('toggle');
@@ -140,7 +154,7 @@ $(document).ready(function(e) {
     	}
     	var commentText = $('#myCommentText').val();
     	if(commentText=="") return;
-    	$.post('CommentsServlet',{"videoId":videoId,"commentText":commentText,"loggedInUser":storedName},function(data){
+    	$.post('CommentsServlet',{"status":"new","videoId":videoId,"commentText":commentText},function(data){
     		$('#myCommentText').val("");
     		$('#myComment').collapse("hide");
     		refreshComments();
@@ -162,12 +176,10 @@ function follow(btn,userName){
     if(tempName == "Follow"){
         $("#"+btn.id).text("Unfollow");
         $("#"+btn.id).attr('class', 'btn btn-default');
-        console.log(storedName+" loggedInUser");
         $.post('FollowUserServlet',{"userName":userName,"loggedInUser":loggedInUser,"status":"follow"},function(data){});
     }else{
         $("#"+btn.id).text("Follow");
         $("#"+btn.id).attr('class', 'btn btn-danger');
-        console.log(storedName+" loggedInUser !");
         $.post('FollowUserServlet',{"userName":userName,"loggedInUser":loggedInUser,"status":"unfollow"},function(data){});
     }
 }
@@ -184,12 +196,13 @@ function loadComments(videoId,column,ascDsc){
     				'<div class="thumbnail" id="comment">'+
     				'<a href="channelPage.html" id="commentOwner">'+data.comments[it].user.userName+'</a>'+
     				'<p id="commentDate">'+data.comments[it].datePosted+'</p>'+
-    				'<div class="commentText"><p>'+data.comments[it].text+'</p></div>'+
+    				'<div class="commentText"><p id="commentEdit'+data.comments[it].id+'">'+data.comments[it].text+'</p></div>'+
     				'<button type="button" class="btn btn-default">Reply</button>'+
     				'<p class="likes" id="rating'+data.comments[it].id+'">'+rating+'</p>'+
     				'<div class="btn-group" id="commLDBtnGroup">'+
     				'<button type="button" class="btn btn-danger" id="like'+data.comments[it].id+'" onclick="commLike('+data.comments[it].id+')"><span class="glyphicon glyphicon-thumbs-up"></span></button>'+
     				'<button type="button" class="btn btn-default" id="dislike'+data.comments[it].id+'" onclick="commDislike('+data.comments[it].id+')"><span class="glyphicon glyphicon-thumbs-down"></span></button>'+
+    				'<button type="button" class="btn btn-default" id="edit'+data.comments[it].id+'" onclick="editComment('+data.comments[it].id+',\''+data.comments[it].text+'\')"><span class="glyphicon glyphicon-edit"></span></button>'+
     				'</div></div></div>');
     		for(temp in data.likes){
     			if(data.comments[it].id==data.likes[temp].comment.id){
@@ -202,6 +215,20 @@ function loadComments(videoId,column,ascDsc){
     	}
     });
 }
+function editComment(commentId,commentText){
+	$('#editComment-modal').modal('show');
+	$('#editCommentText').val(commentText);
+	editCommentId = commentId;
+}
+function editCommentButton(){
+	var commentText = $('#editCommentText').val();
+	$.post('CommentsServlet',{"status":"edit","commentText":commentText,"commentId":editCommentId},function(data){
+		$('#editComment-modal').modal('hide');
+		$('#commentEdit'+editCommentId+'').text(commentText);
+		
+	});
+}
+
 function refreshComments() {
 	var videoId = window.location.search.slice(1).split('&')[0].split('=')[1];
 	var option = commSelect.options[commSelect.selectedIndex].value;
@@ -249,4 +276,46 @@ function commDislike(commId){
         $('#dislike'+commId+'').prop('disabled',true);
 	}
 	$.get('LikeCommentServlet',{"commentId":commId,"loggedInUser":loggedInUser,"status":"disliked"},function(data){});
+}
+function fillEditVideo(video){
+	$('#editVideoName').val(video.videoName);
+	$('#editDescription').val(video.description);
+	$('#editPicUrl').val(video.pictureUrl);
+	if(video.visibility==("PUBLIC")){
+		console.log("its public");
+		$('#selectOne option[value=1]').attr('selected',true);
+	}
+	if(video.visibility==("PRIVATE")){
+		console.log("its private");
+		$('#selectOne option[value=2]').attr('selected',true);
+	}
+	if(video.visibility==("UNLISTED")){
+		console.log("its unlisted");
+		$('#selectOne option[value=3]').attr('selected',true);
+	}
+	
+	if(video.commentsEnabled==true){
+		$('#selectTwo option[value=3]').attr('selected',true);
+	}else{
+		$('#selectTwo option[value=2]').attr('selected',true);
+	}
+	
+	if(video.ratingEnabled==true){
+		$('#selectThree option[value=3]').attr('selected',true);
+	}else{
+		$('#selectThree option[value=2]').attr('selected',true);
+	}
+}
+function saveEditVideo(){
+	var title = $('#editVideoName').val();
+	var desc = $('#editDescription').val();
+	var picurl = $('#editPicUrl').val();
+	if(title=="" || desc=="" || picurl==""){
+		return;
+	}
+	var visib = $('#selectOne').val();
+	var comm = $('#selectTwo').val();
+	var rating = $('#selectThree').val();
+	console.log(editVideoId);
+	$.post('VideoServlet',{"status":"edit","videoId":editVideoId,"title":title,"desc":desc,"picurl":picurl,"visib":visib,"comm":comm,"rating":rating},function(data){location.reload();});
 }
