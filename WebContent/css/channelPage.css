@@ -5,23 +5,6 @@
     text-align: left;  
     min-height: 800px;
 }
-#backgroundImage{
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    max-height: 150px;
-    overflow: hidden;
-    transition-duration: 1s;
-    transition-delay: 0.3s;
-}
-
-#backgroundImage:hover{
-    max-height: 400px;
-    transition-duration: 1s;
-    transition-delay: 0.3s;
-}
-
-
 
 #infoAndOptions{
     width: 100%;
@@ -79,7 +62,7 @@
 #followButton{
     width: 100px;
 }
-#content{
+#mainDiv{
     width: 100%;
     height: auto;
     overflow: auto;
@@ -88,12 +71,6 @@
     border-radius: 10px;
     margin-bottom: 50px;
 }
-#content h4{
-    margin-left: 2%;
-    margin-bottom: 2%;
-    margin-top: 3%;
-}
-
 #videoImage{
     height: 30vh;
     border-radius: 5px;
