@@ -45,6 +45,7 @@ public class GetVideosServlet extends HttpServlet {
 		Map<String, Object> data = new HashMap<>();
 		data.put("topSixChannels", topSixChannels);
 		data.put("videos", videos);
+		data.put("loggedInUser", loggedInUser);
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonData = mapper.writeValueAsString(data);
 		System.out.println("Zavrseno ucitavanje video: " +jsonData);

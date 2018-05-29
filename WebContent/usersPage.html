@@ -3,7 +3,7 @@
     <head>
       <meta name="description" content="MyTube - By Milos Pavicic" />
       <meta charset=utf-8 content="width=device-width, initial-scale=1 maximum-scale=1, user-scalable=no">
-      <title>MyTube - The Origin of Entertainment</title>
+      <title>MyTube</title>
       <script src="js/jquery-2.1.4.min.js"></script>
       <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>
       <script src="bootstrap/js/bootstrap.min.js"></script>
@@ -31,7 +31,7 @@
                         <div class="form-group-sm">
                             <div class="input-group" id="searchBarNav">
                                 <input type="text" class="form-control" placeholder="Search" autocomplete="off" id="searchParameter">
-                                <span class="input-group-btn"><button class="btn btn-danger btn-sm" id="searchSubmit">Submit</button></span>
+                                <span class="input-group-btn"><button class="btn btn-danger btn-sm" onclick="search()">Submit</button></span>
                             </div>
                         </div>
                     </form>
@@ -48,14 +48,14 @@
                     </ul>
                   
                     <ul class="nav navbar-nav navbar-right" id="navbarLoggedIn">
-                        <li><a href="#"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
+                        <li><a href="#newVideoModal" data-toggle="modal" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
                         <li class="dropdown">
                             <!-- Link koji otvara dropdown listu -->
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameTab"></a>
                             <!-- Lista koja se pojavljuje i sakriva na klik -->
                             <ul class="dropdown-menu" id="mainDropdown">
                                 <li><a href="usersPage.html" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
-                                <li><a href="channelPage.html" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
+                                <li><a id="myChannel" href="channelPage.html" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
                                 <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-time"></span> History</a></li>
                                 <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-thumbs-up"></span> Liked</a></li>
                                 <li><a data-toggle="collapse" href="#playlists" id="playlistCollapse"><span class="glyphicon glyphicon-th-list"></span> Playlists<span class="caret"></span></a>
@@ -138,12 +138,32 @@
                                 <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" required/>
                                 <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" required/>
                                 <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email" required/>
+                                <label for="rlol" id="rlou">Link or update : </label>
+		                    	<input type="checkbox" id="rlol" onchange="lolChanged()"/>
+		                    	<input type="text" id="registerPic" class="form-control" placeholder="Profile picture url" required/>
+		                    	<input type="file" name="pic" accept="image/*" id="registerUploadPic"/>
                             </div>
                         </form>
                     </div>
                     <!-- footer -->
                     <div class="modal-footer">
                         <button class="btn btn-danger btn-block" id="registerSubmit">Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="blockedModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 class="modal-title">Blocked user.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>You can't perform this action, because your account has been blocked.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -178,10 +198,131 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="blockModal" role="dialog" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    </div>
+                    <div class="modal-body">Select "Block" below if you are want to block this channel.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger" type="button" onclick="blockUser()">Block</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="unblockModal" role="dialog" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    </div>
+                    <div class="modal-body">Select "Unblock" below if you are want to unblock this channel.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger" type="button" onclick="unblockUser()">Unblock</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="deleteModal" role="dialog" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    </div>
+                    <div class="modal-body">Select "Delete" below if you are want to delete this channel.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger" type="button" onclick="deleteUser()">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="editChannel-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Edit user</h3>
+                    </div>
+                    <!-- body -->
+                    <div class="modal-header">
+                    	<input type="text" id="editFirstName" class="form-control" placeholder="First Name" required/>
+                    	<input type="text" id="editLastName" class="form-control" placeholder="Last Name" required/>
+                    	<input type="password" id="editPassword" class="form-control" placeholder="Password" required/>
+                    	<input type="text" id="editEmail" class="form-control" placeholder="Email" required/>
+                   		<label for="lol" id="lou">Link or update : </label>
+                    	<input type="checkbox" id="lol" onchange="lolChanged()"/>
+                    	<input type="text" id="editPicUrl" class="form-control" placeholder="Profile picture url" required/>
+                    	<input type="file" name="pic" accept="image/*" id="editUploadPic"/>
+                    	<br>
+                    	<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="editDescription" rows="4"></textarea>
+                    	<div id="userTypeSelect">
+                    		<br>
+	                    	<p class="editUser">User type</p>
+	                    	<select name="type" form="typeForm" class="editOption" id="selectType">
+	 							 <option value="1">User</option>
+	 							 <option value="2">Admin</option>
+							</select>
+                    	</div>
+                    </div>
+                    <!-- footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block" onclick="saveEditUser()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="newVideoModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">New video</h3>
+                    </div>
+                    <!-- body -->
+                    <div class="modal-header">
+                    	<input type="text" id="newVideoUrl" class="form-control" placeholder="Video url" required/>
+                    	<input type="text" id="newVideoName" class="form-control" placeholder="Title" required/>
+                    	<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="newDescription" rows="4" placeholder="Description"></textarea>
+                    	<input type="text" id="newPicUrl" class="form-control" placeholder="Picture url" required/>
+                    	<hr>
+                    	<p class="newVideoTitle">Visibility</p>
+                    	<select name="visibility" form="visibilityForm" class="newOption" id="selectVisib">
+ 							 <option value="1">Public</option>
+ 							 <option value="2">Private</option>
+ 							 <option value="3">Unlisted</option>
+						</select>
+						<hr>
+						<p class="newVideoTitle">Comments enabled</p>
+                    	<select name="commAble" form="commAbleForm" class="newOption" id="selectCE">
+ 							 <option value="1">Yes</option>
+ 							 <option value="2">No</option>
+						</select>
+						<hr>
+						<p class="newVideoTitle">Rating enabled</p>
+                    	<select name="ratAble" form="ratAbleForm" class="newOption" id="selectRE">
+ 							 <option value="1">Yes</option>
+ 							 <option value="2">No</option>
+						</select>
+                    </div>
+                    <!-- footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block" onclick="saveNewVideo()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="mainDiv">
             <div class="input-group" id="searchUserBar">
-                <input type="text" class="form-control" placeholder="Search users" autocomplete="off">
-                <span class="input-group-btn"><button class="btn btn-danger">Submit</button></span>
+                <input type="text" class="form-control" placeholder="Search users" autocomplete="off" id="searchUsers">
+                <span class="input-group-btn"><button class="btn btn-danger" onclick="searchUsersButton()">Submit</button></span>
             </div>
             <div class="row">
                 <!--

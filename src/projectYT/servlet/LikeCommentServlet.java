@@ -2,12 +2,16 @@ package projectYT.servlet;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import projectYT.dao.CommentDAO;
 import projectYT.dao.LikeDAO;
@@ -24,43 +28,77 @@ public class LikeCommentServlet extends HttpServlet {
 		Comment comment = CommentDAO.getCommentForId(commentId);
 		HttpSession session = request.getSession();
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		User owner = UserDAO.getUserByName(loggedInUser.getUserName());
+		
 		String status = request.getParameter("status");
-		System.out.println(status+" status");
 		boolean likeOrDislike = false;
 		if(status.equals("liked")) likeOrDislike= true;
-		Date likeDate = new Date();
+		
+		
 		Like likeExists = LikeDAO.commentLikedByUser(commentId, loggedInUser.getUserName());
-		System.out.println(likeExists);
-		if(likeExists==null) {
-			int likeId =LikeDAO.getLikeId();
-			Like newLike = new Like(likeId, likeOrDislike, UserDAO.dateToStringForWrite(likeDate), null, comment, owner);
-			LikeDAO.addLikeDislike(newLike);
-			LikeDAO.addCommentLikeDislike(newLike.getId(),comment.getId());
-			if(likeOrDislike==false) {
-				int tempDis = comment.getDislikeNumber();
-				comment.setDislikeNumber(tempDis+1);
+		String returnStatus = "";
+		if(loggedInUser!=null) {
+			if(likeExists==null) {
+				Date likeDate = new Date();
+				int likeId =LikeDAO.getLikeId();
+				Like newLike = new Like(likeId, likeOrDislike, UserDAO.dateToStringForWrite(likeDate), null, comment, loggedInUser,false);
+				LikeDAO.addLikeDislike(newLike);
+				System.out.println("fail?");
+				System.out.println(newLike.getId()+"  "+comment.getId());
+				LikeDAO.addCommentLikeDislike(newLike.getId(),comment.getId());
+				if(likeOrDislike==false) {
+					int tempDis = comment.getDislikeNumber();
+					comment.setDislikeNumber(tempDis+1);
+					returnStatus = "dislike";
+				}else {
+					int tempLikes = comment.getLikeNumber();
+					comment.setLikeNumber(tempLikes+1);
+					returnStatus = "like";
+				}
+				CommentDAO.updateComment(comment);
 			}else {
-				int tempLikes = comment.getLikeNumber();
-				comment.setLikeNumber(tempLikes+1);
+				if(likeOrDislike==false) {
+					if(likeExists.isLikeOrDislike()==true) {
+						int tempDis = comment.getDislikeNumber();
+						comment.setDislikeNumber(tempDis+1);
+						int tempLikes = comment.getLikeNumber();
+						comment.setLikeNumber(tempLikes-1);
+						returnStatus = "dislike";
+					}else{
+						int tempDis = comment.getDislikeNumber();
+						comment.setDislikeNumber(tempDis-1);
+						returnStatus = "neutral";
+					}
+				}else {
+					if(likeExists.isLikeOrDislike()==true) {
+						int tempDis = comment.getDislikeNumber();
+						comment.setDislikeNumber(tempDis-1);
+						int tempLikes = comment.getLikeNumber();
+						comment.setLikeNumber(tempLikes+1);
+						returnStatus = "like";
+					}else {
+						int tempLikes = comment.getLikeNumber();
+						comment.setLikeNumber(tempLikes-1);
+						returnStatus = "neutral";
+					}
+					
+				}
+				likeExists.setLikeOrDislike(likeOrDislike);
+				LikeDAO.updateLike(likeExists);
+				CommentDAO.updateComment(comment);
 			}
-			CommentDAO.updateComment(comment);
-		}else {
-			if(likeOrDislike==false) {
-				int tempDis = comment.getDislikeNumber();
-				comment.setDislikeNumber(tempDis+1);
-				int tempLikes = comment.getLikeNumber();
-				comment.setLikeNumber(tempLikes-1);
-			}else {
-				int tempDis = comment.getDislikeNumber();
-				comment.setDislikeNumber(tempDis-1);
-				int tempLikes = comment.getLikeNumber();
-				comment.setLikeNumber(tempLikes+1);
-			}
-			likeExists.setLikeOrDislike(likeOrDislike);
-			LikeDAO.updateLike(likeExists);
-			CommentDAO.updateComment(comment);
+			System.out.println("returnStatus: "+returnStatus);
+			Map<String, Object> data = new HashMap<>();
+			data.put("comment", comment);
+			data.put("status", returnStatus);
+			
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(data);
+			System.out.println("Zavrseno ucitavanje video: " +jsonData);
+
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);
 		}
+		
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub

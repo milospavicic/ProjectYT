@@ -84,6 +84,7 @@
 #videoInfo{
     color: dimgray;
     text-decoration: none;
+    margin-left: 1%;
 }
 .rowOne a, .rowTwo a,.row a{
     color: black;

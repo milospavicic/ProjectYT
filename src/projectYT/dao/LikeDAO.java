@@ -22,7 +22,6 @@ public class LikeDAO {
 		
 			if (rset.next()) {
 				id=rset.getInt(1);
-				
 			}
 			id++;
 			return id;
@@ -49,20 +48,23 @@ public class LikeDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT * FROM projectyt.likedislikevideo JOIN projectyt.likedislike on likeDislikevideo.likeId = likeDislike.id WHERE owner=? AND videoId=?";
+			String query = "SELECT likedislike.* FROM projectyt.likedislikevideo JOIN projectyt.likedislike on likeDislikevideo.likeId = likeDislike.id WHERE likeDislikevideo.deleted = ? AND likeDislike.deleted = ? AND owner=? AND videoId=?";
 			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, user);
-			pstmt.setInt(2, videoId);
+			pstmt.setBoolean(1, false);
+			pstmt.setBoolean(2, false);
+			pstmt.setString(3, user);
+			pstmt.setInt(4, videoId);
 			rset = pstmt.executeQuery();
 			if (rset.next()) {
-				int index = 2;
-				int videosId=rset.getInt(index++);
+				int index = 1;
 				int likeId=rset.getInt(index++);
 				boolean isLike=rset.getBoolean(index++);
 				Date d=rset.getDate(index++);
 				String owner=rset.getString(index++);
+				boolean deleted = rset.getBoolean(index++);
 				String date=UserDAO.dateToString(d);
-				Like likedVideo = new Like(likeId, isLike, date, VideoDAO.getVideo(videosId), null, UserDAO.getUserByName(owner));
+				
+				Like likedVideo = new Like(likeId, isLike, date, VideoDAO.getVideo(videoId), null, UserDAO.getUserByName(owner),deleted);
 				return likedVideo;
 			}
 
@@ -88,14 +90,14 @@ public class LikeDAO {
 
 		PreparedStatement pstmt = null;
 		try {
-			String query = "INSERT INTO likeDislike(liked,likeDate,owner) VALUES(?, ?, ?)";
+			String query = "INSERT INTO likeDislike(liked,likeDate,owner,deleted) VALUES(?, ?, ?,?)";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, likeDislike.isLikeOrDislike());
 			Date myDate=UserDAO.stringToDateForWrite(likeDislike.getLikeDate());
 			java.sql.Date date=new java.sql.Date(myDate.getTime());
 			pstmt.setDate(2, date);
 			pstmt.setString(3, likeDislike.getOwner().getUserName());
-			
+			pstmt.setBoolean(4, likeDislike.isDeleted());
 			return pstmt.executeUpdate() == 1;
 
 
@@ -112,15 +114,15 @@ public class LikeDAO {
 		return false;
 	}
 	public static boolean addVideoLikeDislike(int likeId, int videoId) {
+		System.out.println("likeId: "+ likeId+" videoId: "+videoId);
 		Connection conn = ConnectionMenager.getConnection();
-
 		PreparedStatement pstmt = null;
 		try {
-			
-			String query="INSERT INTO likeDislikeVideo(likeId,videoId) VALUES(?, ?)";
+			String query="INSERT INTO likeDislikeVideo(likeId,videoId,deleted) VALUES(?, ?, ?)";
 			pstmt=conn.prepareStatement(query);
 			pstmt.setInt(1, likeId);
 			pstmt.setInt(2, videoId);
+			pstmt.setBoolean(3, false);
 			 return pstmt.executeUpdate() == 1;
 		} catch (Exception ex) {
 			System.out.println("Greska u SQL upitu!");
@@ -156,16 +158,98 @@ public class LikeDAO {
 		}
 		return false;
 	}
+	public static void deleteLikeVideoComplete(int videoId,int likeId) {
+		deleteVideoLike(videoId,likeId);
+		deleteLike(likeId);
+	}
+	public static void deleteLikeCommentComplete(int videoId,int likeId) {
+		deleteCommentLike(videoId,likeId);
+		deleteLike(likeId);
+	}
+	public static boolean deleteLike(int likeId) {
+		Connection conn = ConnectionMenager.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			String query = "UPDATE likeDislike SET deleted = ? WHERE id = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setBoolean(1, true);
+			pstmt.setInt(2, likeId);
+			
+			return pstmt.executeUpdate() == 1;
+		} catch (Exception ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			
+		}
+		return false;
+	}
+	public static boolean deleteVideoLike(int videoId, int likeId) {
+		Connection conn = ConnectionMenager.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			String query = "UPDATE likedislikevideo SET deleted = ? WHERE likeId=? AND videoID = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setBoolean(1, true);
+			pstmt.setInt(2, likeId);
+			pstmt.setInt(3, videoId);
+			
+			return pstmt.executeUpdate() == 1;
+		} catch (Exception ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			
+		}
+		return false;
+	}
+	public static boolean deleteCommentLike(int videoId, int likeId) {
+		Connection conn = ConnectionMenager.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			String query = "UPDATE likedislikecomment SET deleted = ? WHERE likeId=? AND commentId = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setBoolean(1, true);
+			pstmt.setInt(2, likeId);
+			pstmt.setInt(3, videoId);
+			
+			return pstmt.executeUpdate() == 1;
+		} catch (Exception ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			
+		}
+		return false;
+	}
+	
 	public static Like commentLikedByUser(int commentId, String loggedInUser) {
 		Connection conn = ConnectionMenager.getConnection();
 
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT * FROM projectyt.likedislikecomment JOIN projectyt.likedislike on likeDislikecomment.likeId = likeDislike.id WHERE owner=? AND commentId=?";
+			String query = "SELECT * FROM projectyt.likedislikecomment JOIN projectyt.likedislike on likeDislikecomment.likeId = likeDislike.id WHERE likeDislikecomment.deleted = ? AND likeDislike.deleted=? AND owner=? AND commentId=?";
 			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, loggedInUser);
-			pstmt.setInt(2, commentId);
+			pstmt.setBoolean(1, false);
+			pstmt.setBoolean(2, false);
+			pstmt.setString(3, loggedInUser);
+			pstmt.setInt(4, commentId);
 			rset = pstmt.executeQuery();
 			if (rset.next()) {
 				int index = 2;
@@ -174,8 +258,9 @@ public class LikeDAO {
 				boolean isLike=rset.getBoolean(index++);
 				Date d=rset.getDate(index++);
 				String owner=rset.getString(index++);
+				boolean deleted = rset.getBoolean(index++);
 				String date=UserDAO.dateToString(d);
-				Like likedComment = new Like(likeId, isLike, date, null, CommentDAO.getCommentForId(commentsId), UserDAO.getUserByName(owner));
+				Like likedComment = new Like(likeId, isLike, date, null, CommentDAO.getCommentForId(commentsId), UserDAO.getUserByName(owner),deleted);
 				return likedComment;
 			}
 
@@ -202,10 +287,11 @@ public class LikeDAO {
 		PreparedStatement pstmt = null;
 		try {
 			
-			String query="INSERT INTO likeDislikeComment(likeId,commentId) VALUES(?, ?)";
+			String query="INSERT INTO likeDislikeComment(likeId,commentId,deleted) VALUES(?, ?, ?)";
 			pstmt=conn.prepareStatement(query);
 			pstmt.setInt(1, id);
 			pstmt.setInt(2, id2);
+			pstmt.setBoolean(3, false);
 			 return pstmt.executeUpdate() == 1;
 		} catch (Exception ex) {
 			System.out.println("Greska u SQL upitu!");
@@ -224,20 +310,23 @@ public class LikeDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT likeId,commentId,liked,likeDate,projectyt.likedislike.owner FROM projectyt.likedislikecomment JOIN projectyt.likedislike on likeDislikecomment.likeId = likeDislike.id JOIN projectyt.comment on comment.id = commentId WHERE projectyt.likedislike.owner =?  AND projectyt.comment.videoId =? ";
+			String query = "SELECT likedislike.*,likedislikecomment.commentId FROM projectyt.likedislikecomment JOIN projectyt.likedislike on likeDislikecomment.likeId = likeDislike.id JOIN projectyt.comment on comment.id = commentId WHERE likeDislikecomment.deleted = ? AND likeDislike.deleted=? AND projectyt.likedislike.owner =?  AND projectyt.comment.videoId =? ";
 			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, userName);
-			pstmt.setInt(2, videoId);
+			pstmt.setBoolean(1, false);
+			pstmt.setBoolean(2, false);
+			pstmt.setString(3, userName);
+			pstmt.setInt(4, videoId);
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
 				int index = 1;
 				int likeId=rset.getInt(index++);
-				int commentsId=rset.getInt(index++);
 				boolean isLike=rset.getBoolean(index++);
 				Date d=rset.getDate(index++);
 				String owner=rset.getString(index++);
+				boolean deleted = rset.getBoolean(index++);
+				int commentsId=rset.getInt(index++);
 				String date=UserDAO.dateToString(d);
-				Like likedComment = new Like(likeId, isLike, date, null, CommentDAO.getCommentForId(commentsId), UserDAO.getUserByName(owner));
+				Like likedComment = new Like(likeId, isLike, date, null, CommentDAO.getCommentForId(commentsId), UserDAO.getUserByName(owner),deleted);
 				likedComments.add(likedComment);
 			}
 			return likedComments;
@@ -258,37 +347,4 @@ public class LikeDAO {
 		}
 		return null;
 	}
-	public static ArrayList<Integer> likedVideosByUser(String userName){
-		Connection conn = ConnectionMenager.getConnection();
-		ArrayList<Integer> likedVideos = new ArrayList<Integer>();
-		PreparedStatement pstmt = null;
-		ResultSet rset = null;
-		try {
-			String query = "SELECT * FROM likedislikevideo AS A INNER JOIN likedislike AS B ON A.likeId=B.id WHERE owner=?;";
-			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, userName);
-			rset = pstmt.executeQuery();
-			while (rset.next()) {
-				int videoId=rset.getInt(1);
-				likedVideos.add(videoId);
-			}
-			return likedVideos;
-		} catch (Exception ex) {
-			System.out.println("Greska u SQL upitu!");
-			ex.printStackTrace();
-		} finally {
-			try {
-				pstmt.close();
-			} catch (SQLException ex1) {
-				ex1.printStackTrace();
-			}
-			try {
-				rset.close();
-			} catch (SQLException ex1) {
-				ex1.printStackTrace();
-			}
-		}
-		return null;
-	}
-
 }

@@ -132,3 +132,21 @@
         margin-left:  12%;
     } 
 }
+#editChannel-modal,#blockModal,#deleteModal,#unblockModal{
+    text-align: left;
+}
+.editUser{
+	text-align: left;
+	display:inline-block;
+}
+.editOption{
+	text-align: left;
+	display:inline-block;
+}
+
+#lol{
+	vertical-align : middle;
+}
+#lou{
+	padding-top: 1%;
+}

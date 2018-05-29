@@ -23,6 +23,7 @@ public class FollowUserServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		HttpSession session = request.getSession();
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		
 		ArrayList<String> list = new ArrayList<String>();
 		if(loggedInUser!=null) {
 			list = UserDAO.userSubs(loggedInUser.getUserName());

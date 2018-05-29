@@ -24,10 +24,11 @@ public class User {
 	public int subsNumber;
 	public int videosCount;
 	public ArrayList<String> subscriberNames;
+	public boolean lol;
 	
 	public User(String userName, String password, String firstName, String lastName, String email,
 			String channelDescription, String registrationDate, Boolean blocked, ArrayList<User> subscribers,
-			ArrayList<Video> likedVideos, ArrayList<Comment> likedComments, UserType userType, Boolean deleted,String profileUrl) {
+			ArrayList<Video> likedVideos, ArrayList<Comment> likedComments, UserType userType, Boolean deleted,String profileUrl,boolean lol) {
 		super();
 		this.userName = userName;
 		this.password = password;
@@ -43,7 +44,12 @@ public class User {
 		this.userType = userType;
 		this.deleted = deleted;
 		this.profileUrl = profileUrl;
+		this.lol = lol;
 	}
+	public  User() {
+		
+	}
+	
 	public String getUserName() {
 		return userName;
 	}
@@ -145,6 +151,17 @@ public class User {
 	}
 	public void setVideosCount(int videosCount) {
 		this.videosCount = videosCount;
+	}
+	@Override
+	public String toString() {
+		return "User [userName=" + userName + ", password=" + password + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", userType=" + userType + "]";
+	}
+	public boolean isLol() {
+		return lol;
+	}
+	public void setLol(boolean lol) {
+		this.lol = lol;
 	}
 	
 }

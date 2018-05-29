@@ -13,17 +13,18 @@ userType ENUM ('USER','ADMIN') NOT NULL DEFAULT 'USER',
 registrationDate DATE NOT NULL,
 blocked BOOLEAN NOT NULL DEFAULT FALSE,
 deleted BOOLEAN NOT NULL DEFAULT FALSE,
-profileUrl VARCHAR(300) NOT NULL,
+profileUrl VARCHAR(300),
+lol BOOLEAN NOT NULL DEFAULT FALSE,
 PRIMARY KEY (userName)
 );
-INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl) VALUES('marko','123','Marko','Markovic','marko@gmail.com',null,'USER','2018-1-1','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
-INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl) VALUES('darko','123','Darko','Darkovic','darko@gmail.com',null,'USER','2018-3-3','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
-INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl) VALUES('stanko','123','Stanko','Stankic','stanko@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
-INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl) VALUES('pera','123','Pera','Peric','pera@gmail.com',null,'ADMIN','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
-INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl) VALUES('mirko','123','Mirko','Mirkovic','mirko@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
-INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl) VALUES('zoran','123','Zoran','Jovanovic','zoran@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
-INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl) VALUES('goran','123','Goran','Jovanovic','goran@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
-INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl) VALUES('123','123','Ime123','Prezime123','123@gmail.com',null,'admin','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
+INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('marko','123','Marko','Markovic','marko@gmail.com',null,'USER','2018-1-1','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
+INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('darko','123','Darko','Darkovic','darko@gmail.com',null,'USER','2018-3-3','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
+INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('stanko','123','Stanko','Stankic','stanko@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
+INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('pera','123','Pera','Peric','pera@gmail.com',null,'ADMIN','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
+INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('mirko','123','Mirko','Mirkovic','mirko@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
+INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('zoran','123','Zoran','Jovanovic','zoran@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
+INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('goran','123','Goran','Jovanovic','goran@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
+INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('123','123','Ime123','Prezime123','123@gmail.com',null,'admin','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
 
 CREATE TABLE subscribe(
 mainUser VARCHAR(15),
@@ -131,44 +132,47 @@ id BIGINT AUTO_INCREMENT,
 liked BOOLEAN NOT NULL,
 likeDate DATE NOT NULL,
 owner VARCHAR(10),
+deleted BOOLEAN,
 PRIMARY KEY (id),
 FOREIGN KEY (owner) REFERENCES users(userName) ON DELETE RESTRICT
 );
-INSERT INTO likeDislike(liked,likeDate,owner)
-VALUES(true,'2018-2-5','marko');
-INSERT INTO likeDislike(liked,likeDate,owner)
-VALUES(true,'2018-2-3','darko');
-INSERT INTO likeDislike(liked,likeDate,owner)
-VALUES(true,'2018-2-1','pera');
-INSERT INTO likeDislike(liked,likeDate,owner)
-VALUES(true,'2017-9-5','stanko');
-INSERT INTO likeDislike(liked,likeDate,owner)
-VALUES(true,'2017-4-5','marko');
-INSERT INTO likeDislike(liked,likeDate,owner)
-VALUES(true,'2013-2-5','pera');
+INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+VALUES(true,'2018-2-5','marko',false);
+INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+VALUES(true,'2018-2-3','darko',false);
+INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+VALUES(true,'2018-2-1','pera',false);
+INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+VALUES(true,'2017-9-5','stanko',false);
+INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+VALUES(true,'2017-4-5','marko',false);
+INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+VALUES(true,'2013-2-5','pera',false);
 ---------------------------------------------
 CREATE TABLE likeDislikeVideo(
 likeId BIGINT,
 videoId BIGINT,
+deleted BOOLEAN,
 FOREIGN KEY (likeId) REFERENCES likeDislike (id) ON DELETE RESTRICT,
 FOREIGN KEY (videoId) REFERENCES video(id) ON DELETE RESTRICT
 );
-INSERT INTO likeDislikeVideo(likeId,videoId)
-VALUES(1,1);
-INSERT INTO likeDislikeVideo(likeId,videoId)
-VALUES(2,1);
-INSERT INTO likeDislikeVideo(likeId,videoId)
-VALUES(3,2);
-INSERT INTO likeDislikeVideo(likeId,videoId)
-VALUES(4,2);
+INSERT INTO likeDislikeVideo(likeId,videoId,deleted)
+VALUES(1,1,false);
+INSERT INTO likeDislikeVideo(likeId,videoId,deleted)
+VALUES(2,1,false);
+INSERT INTO likeDislikeVideo(likeId,videoId,deleted)
+VALUES(3,2,false);
+INSERT INTO likeDislikeVideo(likeId,videoId,deleted)
+VALUES(4,2,false);
 
 CREATE TABLE likeDislikeComment(
 likeId BIGINT,
 commentId BIGINT,
+deleted BOOLEAN,
 FOREIGN KEY (likeId) REFERENCES likeDislike (id) ON DELETE RESTRICT,
 FOREIGN KEY (commentId) REFERENCES comment (id) ON DELETE RESTRICT
 );
-INSERT INTO likeDislikeComment(likeId,commentId)
-VALUES(5,1);
-INSERT INTO likeDislikeComment(likeId,commentId)
-VALUES(6,1);
+INSERT INTO likeDislikeComment(likeId,commentId,deleted)
+VALUES(5,1,false);
+INSERT INTO likeDislikeComment(likeId,commentId,deleted)
+VALUES(6,1,false);

@@ -142,4 +142,24 @@
     <servlet-name>ChannelServlet</servlet-name>
     <url-pattern>/ChannelServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>SearchServlet</display-name>
+    <servlet-name>SearchServlet</servlet-name>
+    <servlet-class>projectYT.servlet.SearchServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SearchServlet</servlet-name>
+    <url-pattern>/SearchServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>UploadPictureServlet</display-name>
+    <servlet-name>UploadPictureServlet</servlet-name>
+    <servlet-class>projectYT.servlet.UploadPictureServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UploadPictureServlet</servlet-name>
+    <url-pattern>/UploadPictureServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

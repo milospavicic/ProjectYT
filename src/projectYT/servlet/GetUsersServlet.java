@@ -26,9 +26,19 @@ public class GetUsersServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
 
+		ArrayList<User> users = new ArrayList<>();
+		
+		String search = request.getParameter("search");
+		
+		if(search.equals("true")){
+			String input = request.getParameter("input");
+			users =UserDAO.searchUsers(input);
+		}else {
+			users =UserDAO.getAll();
+		}
 		
 		Map<String, Object> data = new HashMap<>();
-		ArrayList<User> users=UserDAO.getAll();
+		//ArrayList<User> users=UserDAO.getAll();
 		data.put("users", users);
 		data.put("loggedInUser", loggedInUser);
 		ObjectMapper mapper = new ObjectMapper();

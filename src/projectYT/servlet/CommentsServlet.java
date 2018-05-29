@@ -52,9 +52,10 @@ public class CommentsServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		String commentText = request.getParameter("commentText");
+		
 		String status = request.getParameter("status");
 		if(status.equals("new")) {
+			String commentText = request.getParameter("commentText");
 			int videoId = Integer.parseInt(request.getParameter("videoId"));
 			Video video = VideoDAO.getVideo(videoId);
 			int newId = CommentDAO.getCommentId();
@@ -68,9 +69,15 @@ public class CommentsServlet extends HttpServlet {
 		int commentId = Integer.parseInt(request.getParameter("commentId"));
 		
 		if(status.equals("edit")){
+			String commentText = request.getParameter("commentText");
 			Comment commentForEdit = CommentDAO.getCommentForId(commentId);
 			commentForEdit.setText(commentText);
 			CommentDAO.updateComment(commentForEdit);
+		}
+		if(status.equals("delete")){
+			Comment commentForDelete = CommentDAO.getCommentForId(commentId);
+			commentForDelete.setDeleted(true);
+			CommentDAO.updateComment(commentForDelete);
 		}
 	}
 

@@ -39,7 +39,8 @@ public class UserDAO {
 				boolean blocked = rset.getBoolean(index++);
 				boolean deleted = rset.getBoolean(index++);
 				String profileUrl = rset.getString(index++);
-				User newUser = new User(userName, password, firstName, lastName, email, channelDescription, registrationDate, blocked, null, null, null, userType,deleted,profileUrl);
+				boolean lol = rset.getBoolean(index++);
+				User newUser = new User(userName, password, firstName, lastName, email, channelDescription, registrationDate, blocked, null, null, null, userType,deleted,profileUrl,lol);
 				pstmt.close();
 				rset.close();
 				
@@ -84,7 +85,8 @@ public class UserDAO {
 				boolean blocked = rset.getBoolean(index++);
 				boolean deleted = rset.getBoolean(index++);
 				String profileUrl = rset.getString(index++);
-				User newUser = new User(userName, password, firstName, lastName, email, channelDescription, registrationDate, blocked, null, null, null, userType,deleted,profileUrl);
+				boolean lol = rset.getBoolean(index++);
+				User newUser = new User(userName, password, firstName, lastName, email, channelDescription, registrationDate, blocked, null, null, null, userType,deleted,profileUrl,lol);
 				
 				users.add(newUser);
 			}
@@ -156,12 +158,110 @@ public class UserDAO {
 		}
 		return null;
 	}
+	public static ArrayList<User> userFollowing(String mainUserName) {
+		Connection conn = ConnectionMenager.getConnection();
+		
+		ArrayList<User> users=new ArrayList<User>();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		try {
+			String query = "SELECT * FROM subscribe WHERE subscriber = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, mainUserName);
+			rset = pstmt.executeQuery();
+
+			while (rset.next()) {
+				int index = 1;
+				String userName = rset.getString(index++);
+				users.add(UserDAO.getUserByName(userName));
+			}
+			return users;
+
+		} catch (Exception ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+		return null;
+	}
+	public static ArrayList<User> searchUsers(String parameter) {
+		Connection conn = ConnectionMenager.getConnection();
+		
+		ArrayList<User> users=new ArrayList<User>();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		try {
+			String query = "SELECT * FROM users WHERE deleted = ? AND (userName LIKE ? OR firstName LIKE ? OR lastName LIKE ? OR email LIKE ? OR userType LIKE ?)";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setBoolean(1, false);
+			pstmt.setString(2, "%"+parameter+"%");
+			pstmt.setString(3, "%"+parameter+"%");
+			pstmt.setString(4, "%"+parameter+"%");
+			pstmt.setString(5, "%"+parameter+"%");
+			pstmt.setString(6, "%"+parameter+"%");
+			System.out.println(pstmt);
+			rset = pstmt.executeQuery();
+
+			while (rset.next()) {
+				int index = 1;
+				String userName = rset.getString(index++);
+				String password = rset.getString(index++);
+				String firstName = rset.getString(index++);
+				String lastName = rset.getString(index++);
+				String email = rset.getString(index++);
+				String channelDescription = rset.getString(index++);
+				UserType userType = UserType.valueOf(rset.getString(index++));
+				Date date= rset.getDate(index++);
+				String registrationDate = dateToString(date);
+				boolean blocked = rset.getBoolean(index++);
+				boolean deleted = rset.getBoolean(index++);
+				String profileUrl = rset.getString(index++);
+				boolean lol = rset.getBoolean(index++);
+				User newUser = new User(userName, password, firstName, lastName, email, channelDescription, registrationDate, blocked, null, null, null, userType,deleted,profileUrl,lol);
+				
+				users.add(newUser);
+			}
+			for (User user : users) {
+				user.setSubscriberNames(getSubsUserName(user.getUserName()));
+				user.subsNumber = getSubsNumber(user.getUserName());
+				user.videosCount = VideoDAO.getVideoCountForUser(user.getUserName());
+			}
+			return users;
+
+		} catch (Exception ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
 	public static boolean addUser(User user) {
 		Connection conn = ConnectionMenager.getConnection();
 
 		PreparedStatement pstmt = null;
 		try {
-			String query = "INSERT INTO users (userName, password, firstName, lastName, email, channelDescription, userType, registrationDate, blocked,deleted,profileUrl) VALUES (?, ?, ?, ? ,? ,? , ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO users (userName, password, firstName, lastName, email, channelDescription, userType, registrationDate, blocked,deleted,profileUrl,lol) VALUES (?, ?, ?, ?, ? ,? ,? , ?, ?, ?, ?, ?)";
 
 			pstmt = conn.prepareStatement(query);
 			int index = 1;
@@ -178,6 +278,7 @@ public class UserDAO {
 			pstmt.setBoolean(index++, user.getBlocked());
 			pstmt.setBoolean(index++, user.getDeleted());
 			pstmt.setString(index++, user.getProfileUrl());
+			pstmt.setBoolean(index++, user.isLol());
 			return pstmt.executeUpdate() == 1;
 		} catch (SQLException ex) {
 			System.out.println("Greska u SQL upitu!");
@@ -368,7 +469,39 @@ public class UserDAO {
 		}
 		return false;
 	}
-	
+	public static boolean update(User user) {
+		Connection conn = ConnectionMenager.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			String query = "UPDATE users SET password = ?, firstName = ?, lastName = ?, email = ?, channelDescription = ?, profileUrl = ?, blocked = ?, deleted = ?, userType = ?, lol = ?  WHERE userName = ?";
+			pstmt = conn.prepareStatement(query);
+			int index = 1;
+			pstmt.setString(index++, user.getPassword());
+			pstmt.setString(index++, user.getFirstName());
+			pstmt.setString(index++, user.getLastName());
+			pstmt.setString(index++, user.getEmail());
+			pstmt.setString(index++, user.getChannelDescription());
+			pstmt.setString(index++, user.getProfileUrl());
+			pstmt.setBoolean(index++, user.getBlocked());
+			pstmt.setBoolean(index++,user.getDeleted());
+			pstmt.setString(index++, user.getUserType().toString());
+
+			pstmt.setBoolean(index++, user.isLol());
+			pstmt.setString(index++, user.getUserName());
+
+			return pstmt.executeUpdate() == 1;
+		} catch (Exception ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+		return false;
+	}
 	public static String dateToString(Date date) {
 		SimpleDateFormat formatvr = new SimpleDateFormat("dd.MM.yyyy");
 		String datum;

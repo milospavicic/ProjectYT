@@ -1,9 +1,9 @@
 .mainDiv{
     width: 82%;
-    margin-top: 50px;
     display: inline-block;
     text-align: left;  
     min-height: 800px;
+    padding: 0;
 }
 
 #infoAndOptions{
@@ -12,6 +12,7 @@
     margin: 0;
     padding: 0;
     border-radius: 0 0 10px 10px;
+    margin-top: 50px;
 }
 
 #infoAndOptions ul li a{
@@ -177,14 +178,14 @@
 #videoInfo{
     color: black;
     text-decoration: none;
-    margin-left: 2%;
+    margin-left: 4%;
 }
 .row a{
     color: black;
     text-decoration: none;
 }
 .col-md-4{
-    padding: 25px 10px;
+    padding: 10px 20px;
 }
 #videoImageHomepage{
     height: 60vh;
@@ -244,7 +245,7 @@
 .thumbnail{
     margin: 0 1px;
 }
-#reportModal,#blockModal,#deleteModal{
+#editChannel-modal,#blockModal,#deleteModal{
     text-align: left;
 }
 #welcomeVideo{
@@ -252,4 +253,33 @@
     padding: 0;
     margin-right: 0;
     border-radius: 10px;
+}
+#followingInfo{
+    color: black;
+    text-decoration: none;
+    margin-left: 3%;
+    font-size: 12px;
+}
+.editUser{
+	text-align: left;
+	display:inline-block;
+}
+.editOption{
+	text-align: left;
+	display:inline-block;
+}
+.orderVideos{
+	text-align: left;
+	display:inline-block;
+}
+#h4Tittle{
+	margin-top: 2%;
+	margin-left: 2%;
+	padding: 0;
+}
+#lol{
+	vertical-align : middle;
+}
+#lou{
+	padding-top: 1%;
 }

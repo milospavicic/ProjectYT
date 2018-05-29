@@ -26,30 +26,83 @@ public class ChannelServlet extends HttpServlet {
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String channelName = request.getParameter("channelName");
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		ArrayList<Video> videos = new ArrayList<Video>();
-		if(loggedInUser!=null) {
-			if(channelName.equals(loggedInUser.getUserName()) || loggedInUser.getUserType()==UserType.ADMIN) {
-				videos = VideoDAO.getVideosForUser(channelName, true);
-			}else {
-				videos = VideoDAO.getVideosForUser(channelName, false);
-			}
-		}else {
-			videos = VideoDAO.getVideosForUser(channelName, false);
-		}
-		
-		ArrayList<Integer> videoIds = LikeDAO.likedVideosByUser(channelName);
-		ArrayList<Video> likedVideos = new ArrayList<Video>();
-		for (Integer it : videoIds) {
-			likedVideos.add(VideoDAO.getVideo(it));
-		}
 		User channel = UserDAO.getUserByName(channelName);
 		
+		HttpSession session = request.getSession();
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		
+		boolean followThisChannel = false;
+		if(loggedInUser!=null) {
+			ArrayList<String> list = UserDAO.userSubs(loggedInUser.getUserName());
+			for (String string : list) {
+				if((channelName).equals(string)) {
+					followThisChannel = true;
+					break;
+				}
+			}
+		}
+		
+		String status = request.getParameter("status");
+		
+		ArrayList<Video> videos = new ArrayList<Video>();
+		ArrayList<User> following = new ArrayList<User>();
+		ArrayList<Video> likedVideos = new ArrayList<Video>();
+		
+		switch (status) {
+		case "homepage":
+			int order = Integer.parseInt(request.getParameter("orderBy"));
+			String orderBy = "";
+			System.out.println(order+ " order");
+			switch (order) {
+			case 1:
+				orderBy="ORDER BY datePosted DESC";
+				break;
+			case 2:
+				orderBy="ORDER BY datePosted ASC";
+				break;
+			case 3:
+				orderBy="ORDER BY views DESC";
+				break;
+			case 4:
+				orderBy="ORDER BY views ASC";
+				break;
+
+			}
+			
+			if(loggedInUser!=null) {
+				if(channelName.equals(loggedInUser.getUserName()) || loggedInUser.getUserType()==UserType.ADMIN) {
+					videos = VideoDAO.getVideosForUser(channelName, true, orderBy);
+				}else {
+					videos = VideoDAO.getVideosForUser(channelName, false, orderBy);
+				}
+			}else {
+				videos = VideoDAO.getVideosForUser(channelName, false, orderBy);
+			}
+			break;
+
+		case "following":
+			following = UserDAO.userFollowing(channelName);
+			break;
+		case "likes":
+			if(loggedInUser!=null) {
+				if(channelName.equals(loggedInUser.getUserName()) || loggedInUser.getUserType()==UserType.ADMIN) {
+					likedVideos = VideoDAO.getVideosLikedByUser(channelName, true);
+				}else {
+					likedVideos = VideoDAO.getVideosLikedByUser(channelName, false);
+				}
+			}else {
+				likedVideos = VideoDAO.getVideosLikedByUser(channelName, false);
+			}
+			break;
+		}
+		
 		Map<String, Object> data = new HashMap<>();
+		data.put("loggedInUser", loggedInUser);
 		data.put("videos", videos);
-		data.put("likedVideos", likedVideos);
+		data.put("likes", likedVideos);
 		data.put("channel", channel);
+		data.put("following", following);
+		data.put("followThisChannel", followThisChannel);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonData = mapper.writeValueAsString(data);
@@ -60,8 +113,77 @@ public class ChannelServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		HttpSession session = request.getSession();
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		String channelName = request.getParameter("channelName");
+		User channel = UserDAO.getUserByName(channelName);
+		System.out.println(channel);
+		
+		String status = request.getParameter("status");
+		System.out.println(status);
+		if(status.equals("edit")) {
+			
+			String firstName = request.getParameter("firstName");
+			String lastName = request.getParameter("lastName");
+			String password = request.getParameter("password");
+			String email = request.getParameter("email");
+			String profileUrl = request.getParameter("profileUrl");
+			String channelDescription = request.getParameter("channelDescription");
+			String lol = request.getParameter("lol");
+			boolean boolLOL = false;
+			if(lol.equals("true")) {
+				boolLOL = true;
+				session.setAttribute("channel", channel);
+			}
+				
+				
+			if(loggedInUser!=null) {
+				if(loggedInUser.getUserType()==UserType.ADMIN) {
+					int userType = Integer.parseInt(request.getParameter("userType"));
+					channel.setFirstName(firstName);
+					channel.setLastName(lastName);
+					channel.setPassword(password);
+					channel.setEmail(email);
+					channel.setProfileUrl(profileUrl);
+					channel.setLol(boolLOL);
+						
+					if(channelDescription=="") {
+						channel.setChannelDescription(null);
+					}else {
+						channel.setChannelDescription(channelDescription);
+					}
+					if(userType==1){
+						channel.setUserType(UserType.USER);
+					}else {
+						channel.setUserType(UserType.ADMIN);
+					}
+					UserDAO.update(channel);
+				}else {
+					channel.setFirstName(firstName);
+					channel.setLastName(lastName);
+					channel.setPassword(password);
+					channel.setEmail(email);
+					channel.setProfileUrl(profileUrl);
+					channel.setLol(boolLOL);
+					if(channelDescription=="") {
+						channel.setChannelDescription(null);
+					}else {
+						channel.setChannelDescription(channelDescription);
+					}
+					UserDAO.update(channel);
+				}
+			}
+		}else if(status.equals("delete")) {
+			channel.setDeleted(true);
+			UserDAO.update(channel);
+		}else if(status.equals("block")) {
+			channel.setBlocked(true);
+			UserDAO.update(channel);
+		}else if(status.equals("unblock")) {
+			channel.setBlocked(false);
+			UserDAO.update(channel);
+		}
+
 	}
 
 }

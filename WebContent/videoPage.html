@@ -3,7 +3,7 @@
     <head>
         <meta name="description" content="MyTube - By Milos Pavicic" />
         <meta charset=utf-8 content="width=device-width, initial-scale=1 maximum-scale=1, user-scalable=no">
-        <title>MyTube - The Origin of Entertainment</title>
+        <title>MyTube</title>
         <script src="js/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>
         <script src="bootstrap/js/bootstrap.min.js"></script>
@@ -30,7 +30,7 @@
                         <div class="form-group-sm">
                             <div class="input-group" id="searchBarNav">
                                 <input type="text" class="form-control" placeholder="Search" autocomplete="off" id="searchParameter">
-                                <span class="input-group-btn"><button class="btn btn-danger btn-sm" id="searchSubmit">Submit</button></span>
+                                <span class="input-group-btn"><button class="btn btn-danger btn-sm" onclick="search()">Submit</button></span>
                             </div>
                         </div>
                     </form>
@@ -47,14 +47,14 @@
                     </ul>
                   
                     <ul class="nav navbar-nav navbar-right" id="navbarLoggedIn">
-                        <li><a href="#"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
+                        <li><a href="#newVideoModal" data-toggle="modal" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
                         <li class="dropdown">
                             <!-- Link koji otvara dropdown listu -->
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameTab"></a>
                             <!-- Lista koja se pojavljuje i sakriva na klik -->
                             <ul class="dropdown-menu" id="mainDropdown">
                                 <li><a href="usersPage.html" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
-                                <li><a href="channelPage.html" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
+                                <li><a id="myChannel" href="channelPage.html" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
                                 <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-time"></span> History</a></li>
                                 <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-thumbs-up"></span> Liked</a></li>
                                 <li><a data-toggle="collapse" href="#playlists" id="playlistCollapse"><span class="glyphicon glyphicon-th-list"></span> Playlists<span class="caret"></span></a>
@@ -137,6 +137,10 @@
                                 <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" required/>
                                 <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" required/>
                                 <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email" required/>
+                                <label for="rlol" id="rlou">Link or update : </label>
+		                    	<input type="checkbox" id="rlol" onchange="lolChanged()"/>
+		                    	<input type="text" id="registerPic" class="form-control" placeholder="Profile picture url" required/>
+		                    	<input type="file" name="pic" accept="image/*" id="registerUploadPic"/>
                             </div>
                         </form>
                     </div>
@@ -182,8 +186,9 @@
                     </div>
                     <!-- body -->
                     <div class="modal-header">
-                    	<input type="text" id="editVideoName" class="form-control" placeholder="Title" required/>
-                    	<input type="text" id="editDescription" class="form-control" placeholder="Description" required/>
+                    	<!-- <input type="text" id="editVideoName" class="form-control" placeholder="Title" required/> 
+                    	<input type="text" id="editDescription" class="form-control" placeholder="Description" required/>-->
+                    	<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="editDescription" rows="4" placeholder="Description"></textarea>
                     	<input type="text" id="editPicUrl" class="form-control" placeholder="Picture url" required/>
                     	<hr>
                     	<p class="editVideoTitle">Visibility</p>
@@ -212,8 +217,63 @@
                 </div>
             </div>
         </div>
-        
-        
+        <div class="modal fade" id="newVideoModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">New video</h3>
+                    </div>
+                    <!-- body -->
+                    <div class="modal-header">
+                    	<input type="text" id="newVideoUrl" class="form-control" placeholder="Video url" required/>
+                    	<input type="text" id="newVideoName" class="form-control" placeholder="Title" required/>
+                    	<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="newDescription" rows="4" placeholder="Description"></textarea>
+                    	<input type="text" id="newPicUrl" class="form-control" placeholder="Picture url" required/>
+                    	<hr>
+                    	<p class="newVideoTitle">Visibility</p>
+                    	<select name="visibility" form="visibilityForm" class="newOption" id="selectVisib">
+ 							 <option value="1">Public</option>
+ 							 <option value="2">Private</option>
+ 							 <option value="3">Unlisted</option>
+						</select>
+						<hr>
+						<p class="newVideoTitle">Comments enabled</p>
+                    	<select name="commAble" form="commAbleForm" class="newOption" id="selectCE">
+ 							 <option value="1">Yes</option>
+ 							 <option value="2">No</option>
+						</select>
+						<hr>
+						<p class="newVideoTitle">Rating enabled</p>
+                    	<select name="ratAble" form="ratAbleForm" class="newOption" id="selectRE">
+ 							 <option value="1">Yes</option>
+ 							 <option value="2">No</option>
+						</select>
+                    </div>
+                    <!-- footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block" onclick="saveNewVideo()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="blockedModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 class="modal-title">Blocked user.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>You can't perform this action, because your account has been blocked.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="badLoginModal" role="dialog">
             <div class="modal-dialog">
                   <!-- Modal content-->
@@ -244,20 +304,6 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="reportModal" role="dialog" >
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
-                    </div>
-                    <div class="modal-body">Select "Report" below if you are want to report this video.</div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn btn-danger" href="index.html" data-dismiss="modal">Report</a>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="modal fade" id="blockModal" role="dialog" >
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -267,7 +313,21 @@
                     <div class="modal-body">Select "Block" below if you are want to block this video.</div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn btn-danger" href="index.html">Block</a>
+                       	<button class="btn btn-danger" type="button" onclick="blockVideo()">Block</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="unblockModal" role="dialog" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    </div>
+                    <div class="modal-body">Select "Unblock" below if you are want to block this video.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger" type="button" onclick="unblockVideo()">Unblock</button>
                     </div>
                 </div>
             </div>
@@ -281,7 +341,21 @@
                     <div class="modal-body">Select "Delete" below if you are want to delete this video.</div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn btn-danger" href="index.html">Delete</a>
+                        <button class="btn btn-danger" type="button" onclick="deleteVideo()">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="deleteCommentModal" role="dialog" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    </div>
+                    <div class="modal-body">Select "Delete" below if you are want to delete this comment.</div>
+                    <div class="modal-footer">
+                       <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                       <button class="btn btn-danger" onclick="deleteCommentById()">Delete</button>
                     </div>
                 </div>
             </div>
@@ -300,7 +374,7 @@
 
                         <div class="viewsAndButton" id="buttonsDiv">
                             <div class="btn-group" id="ldBtnGroup">
-                                <button type="button" id="likeButton" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+                                <button type="button" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span></button>
                                 <button type="button" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span></button>
                             </div>
                             <div class="btn-group" id="optionsBtnGroup">
@@ -310,6 +384,7 @@
                                 <ul class="dropdown-menu" >
                                     <li id="deleteOptionVideo"><a href="#deleteModal" data-toggle="modal">Delete video</a></li>
                                     <li id="blockOptionVideo"><a href="#blockModal" data-toggle="modal">Block video</a></li>
+                                    <li id="unblockOptionVideo"><a href="#unblockModal" data-toggle="modal">Unblock video</a></li>
                                     <li id="editVideoOption"><a href="#editVideo-modal" data-toggle="modal">Edit video</a></li>
                                     <li><a href="#">Add to playlist</a></li>
                                 </ul>

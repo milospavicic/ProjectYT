@@ -11,8 +11,9 @@ public class Like {
 	private Video video;
 	private Comment comment;
 	private User owner;
+	private boolean deleted;
 	
-	public Like(int id, boolean likeOrDislike, String likeDate, Video video, Comment comment, User owner) {
+	public Like(int id, boolean likeOrDislike, String likeDate, Video video, Comment comment, User owner,boolean deleted) {
 		super();
 		this.id = id;
 		this.likeOrDislike = likeOrDislike;
@@ -20,6 +21,7 @@ public class Like {
 		this.video = video;
 		this.comment = comment;
 		this.owner = owner;
+		this.deleted = deleted;
 	}
 
 	public int getId() {
@@ -68,6 +70,14 @@ public class Like {
 
 	public void setOwner(User owner) {
 		this.owner = owner;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 	
 }

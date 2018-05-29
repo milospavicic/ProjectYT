@@ -211,7 +211,7 @@
 #imgFormat:hover{
     opacity: 1;
 }
-#reportModal,#blockModal,#deleteModal{
+#editVideo-modal,#blockModal,#deleteModal,#editComment-modal,#deleteCommentModal{
     text-align: left;
 }
 
