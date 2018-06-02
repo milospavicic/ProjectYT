@@ -74,7 +74,7 @@
     margin: 0;
     padding: 0;
     margin: 0 1%;
-    border-radius: 10px;
+    border-radius: 50%;
 }
 .description p{
     clear: left;
@@ -211,7 +211,7 @@
 #imgFormat:hover{
     opacity: 1;
 }
-#editVideo-modal,#blockModal,#deleteModal,#editComment-modal,#deleteCommentModal{
+#editVideo-modal,#blockModal,#deleteModal,#editComment-modal,#deleteCommentModal,#unblockModal,#succesEdit,#commentDel,#commEdit,#failModal{
     text-align: left;
 }
 
@@ -222,4 +222,11 @@
 .editOption{
 	text-align: left;
 	display:inline-block;
+}
+#commentPic{
+	float: left;
+	margin: 3px 5px 5px 5px;
+}
+#commentPic img{
+	border-radius: 50%;
 }

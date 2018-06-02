@@ -13,70 +13,73 @@ import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import projectYT.dao.LikeDAO;
 import projectYT.dao.UserDAO;
 import projectYT.dao.VideoDAO;
 import projectYT.model.User;
-import projectYT.model.Video;
 import projectYT.model.User.UserType;
-
+import projectYT.model.Video;
 
 public class ChannelServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String channelName = request.getParameter("channelName");
 		User channel = UserDAO.getUserByName(channelName);
-		
+
 		HttpSession session = request.getSession();
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		
+
 		boolean followThisChannel = false;
-		if(loggedInUser!=null) {
+		if (loggedInUser != null) {
 			ArrayList<String> list = UserDAO.userSubs(loggedInUser.getUserName());
 			for (String string : list) {
-				if((channelName).equals(string)) {
+				if ((channelName).equals(string)) {
 					followThisChannel = true;
 					break;
 				}
 			}
 		}
-		
+
 		String status = request.getParameter("status");
-		
+
 		ArrayList<Video> videos = new ArrayList<Video>();
 		ArrayList<User> following = new ArrayList<User>();
 		ArrayList<Video> likedVideos = new ArrayList<Video>();
-		
+
 		switch (status) {
 		case "homepage":
 			int order = Integer.parseInt(request.getParameter("orderBy"));
 			String orderBy = "";
-			System.out.println(order+ " order");
+			System.out.println(order + " order");
 			switch (order) {
 			case 1:
-				orderBy="ORDER BY datePosted DESC";
+				orderBy = "ORDER BY datePosted DESC";
 				break;
 			case 2:
-				orderBy="ORDER BY datePosted ASC";
+				orderBy = "ORDER BY datePosted ASC";
 				break;
 			case 3:
-				orderBy="ORDER BY views DESC";
+				orderBy = "ORDER BY views DESC";
 				break;
 			case 4:
-				orderBy="ORDER BY views ASC";
+				orderBy = "ORDER BY views ASC";
 				break;
 
 			}
-			
-			if(loggedInUser!=null) {
-				if(channelName.equals(loggedInUser.getUserName()) || loggedInUser.getUserType()==UserType.ADMIN) {
+
+			if (loggedInUser != null) {
+				if (channelName.equals(loggedInUser.getUserName())
+						|| (loggedInUser.getUserType() == UserType.ADMIN && loggedInUser.getBlocked() == false)) {
 					videos = VideoDAO.getVideosForUser(channelName, true, orderBy);
-				}else {
+					System.out.println("option1");
+				} else {
 					videos = VideoDAO.getVideosForUser(channelName, false, orderBy);
+					System.out.println("option2");
 				}
-			}else {
+			} else {
 				videos = VideoDAO.getVideosForUser(channelName, false, orderBy);
+				System.out.println("option3");
 			}
 			break;
 
@@ -84,18 +87,18 @@ public class ChannelServlet extends HttpServlet {
 			following = UserDAO.userFollowing(channelName);
 			break;
 		case "likes":
-			if(loggedInUser!=null) {
-				if(channelName.equals(loggedInUser.getUserName()) || loggedInUser.getUserType()==UserType.ADMIN) {
+			if (loggedInUser != null) {
+				if (channelName.equals(loggedInUser.getUserName()) || loggedInUser.getUserType() == UserType.ADMIN) {
 					likedVideos = VideoDAO.getVideosLikedByUser(channelName, true);
-				}else {
+				} else {
 					likedVideos = VideoDAO.getVideosLikedByUser(channelName, false);
 				}
-			}else {
+			} else {
 				likedVideos = VideoDAO.getVideosLikedByUser(channelName, false);
 			}
 			break;
 		}
-		
+
 		Map<String, Object> data = new HashMap<>();
 		data.put("loggedInUser", loggedInUser);
 		data.put("videos", videos);
@@ -103,87 +106,146 @@ public class ChannelServlet extends HttpServlet {
 		data.put("channel", channel);
 		data.put("following", following);
 		data.put("followThisChannel", followThisChannel);
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonData = mapper.writeValueAsString(data);
-		System.out.println("Channel servlet: " +jsonData);
+		System.out.println("Channel servlet: " + jsonData);
 
 		response.setContentType("application/json");
 		response.getWriter().write(jsonData);
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		String channelName = request.getParameter("channelName");
 		User channel = UserDAO.getUserByName(channelName);
 		System.out.println(channel);
-		
+
 		String status = request.getParameter("status");
-		System.out.println(status);
-		if(status.equals("edit")) {
-			
-			String firstName = request.getParameter("firstName");
-			String lastName = request.getParameter("lastName");
-			String password = request.getParameter("password");
-			String email = request.getParameter("email");
-			String profileUrl = request.getParameter("profileUrl");
-			String channelDescription = request.getParameter("channelDescription");
-			String lol = request.getParameter("lol");
-			boolean boolLOL = false;
-			if(lol.equals("true")) {
-				boolLOL = true;
-				session.setAttribute("channel", channel);
+		System.out.println(status + " - Status");
+		String endStatus = "";
+		switch (status) {
+		case "edit":
+			try {
+
+				String basicProfileUrl = "http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png";
+
+				String firstName = request.getParameter("firstName");
+				String lastName = request.getParameter("lastName");
+				String password = request.getParameter("password");
+				String email = request.getParameter("email");
+				String profileUrl = request.getParameter("profileUrl");
+				String channelDescription = request.getParameter("channelDescription");
+				String lol = request.getParameter("lol");
+				String newFile = request.getParameter("newFile");
+				System.out.println(lol + " - lol");
+
+				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
+					if (loggedInUser.getUserType() == UserType.ADMIN) {
+						int userType = Integer.parseInt(request.getParameter("userType"));
+						channel.setFirstName(firstName);
+						channel.setLastName(lastName);
+						channel.setPassword(password);
+						channel.setEmail(email);
+						channel.setProfileUrl(profileUrl);
+						if (lol.equals("true")) {
+							channel.setLol(true);
+							if (newFile.equals("true")) {
+								session.setAttribute("channel", channel);
+							}
+						} else {
+							channel.setLol(false);
+							if (profileUrl.equals("")) {
+								channel.setProfileUrl(basicProfileUrl);
+							} else {
+								channel.setProfileUrl(profileUrl);
+							}
+						}
+						if (channelDescription == "") {
+							channel.setChannelDescription(null);
+						} else {
+							channel.setChannelDescription(channelDescription);
+						}
+						if (userType == 1) {
+							channel.setUserType(UserType.USER);
+						} else {
+							channel.setUserType(UserType.ADMIN);
+						}
+						UserDAO.update(channel);
+					} else {
+						channel.setFirstName(firstName);
+						channel.setLastName(lastName);
+						channel.setPassword(password);
+						channel.setEmail(email);
+						channel.setProfileUrl(profileUrl);
+						if (channel.isLol() == true && lol.equals("true")) {
+							session.setAttribute("channel", channel);
+						} else if (channel.isLol() != true && lol.equals("true")) {
+							channel.setLol(true);
+							session.setAttribute("channel", channel);
+						} else {
+							channel.setLol(false);
+							if (profileUrl.equals("")) {
+								channel.setProfileUrl(basicProfileUrl);
+							}
+						}
+						if (channelDescription == "") {
+							channel.setChannelDescription(null);
+						} else {
+							channel.setChannelDescription(channelDescription);
+						}
+						UserDAO.update(channel);
+					}
+				}
+				endStatus = "editSuccess";
+			} catch (Exception e) {
+				endStatus = "editFailed";
 			}
-				
-				
-			if(loggedInUser!=null) {
-				if(loggedInUser.getUserType()==UserType.ADMIN) {
-					int userType = Integer.parseInt(request.getParameter("userType"));
-					channel.setFirstName(firstName);
-					channel.setLastName(lastName);
-					channel.setPassword(password);
-					channel.setEmail(email);
-					channel.setProfileUrl(profileUrl);
-					channel.setLol(boolLOL);
-						
-					if(channelDescription=="") {
-						channel.setChannelDescription(null);
-					}else {
-						channel.setChannelDescription(channelDescription);
-					}
-					if(userType==1){
-						channel.setUserType(UserType.USER);
-					}else {
-						channel.setUserType(UserType.ADMIN);
-					}
-					UserDAO.update(channel);
-				}else {
-					channel.setFirstName(firstName);
-					channel.setLastName(lastName);
-					channel.setPassword(password);
-					channel.setEmail(email);
-					channel.setProfileUrl(profileUrl);
-					channel.setLol(boolLOL);
-					if(channelDescription=="") {
-						channel.setChannelDescription(null);
-					}else {
-						channel.setChannelDescription(channelDescription);
-					}
+			break;
+		case "delete":
+			try {
+				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
+					channel.setDeleted(true);
 					UserDAO.update(channel);
 				}
+				endStatus = "deleteSuccess";
+			} catch (Exception e) {
+				endStatus = "deleteFailed";
 			}
-		}else if(status.equals("delete")) {
-			channel.setDeleted(true);
-			UserDAO.update(channel);
-		}else if(status.equals("block")) {
-			channel.setBlocked(true);
-			UserDAO.update(channel);
-		}else if(status.equals("unblock")) {
-			channel.setBlocked(false);
-			UserDAO.update(channel);
+			break;
+		case "block":
+			try {
+				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
+					channel.setBlocked(true);
+					UserDAO.update(channel);
+				}
+				endStatus = "blockSuccess";
+			} catch (Exception e) {
+				endStatus = "blockFailed";
+			}
+			break;
+		case "unblock":
+			try {
+				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
+					channel.setBlocked(false);
+					UserDAO.update(channel);
+				}
+				endStatus = "unblockSuccess";
+			} catch (Exception e) {
+				endStatus = "unblockFailed";
+			}
+			break;
 		}
+		Map<String, Object> data = new HashMap<>();
+		data.put("endStatus", endStatus);
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonData = mapper.writeValueAsString(data);
+		System.out.println("Zavrseno ucitavanje video: " + jsonData);
 
+		response.setContentType("application/json");
+		response.getWriter().write(jsonData);
 	}
 
 }

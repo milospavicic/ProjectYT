@@ -36,7 +36,7 @@ public class LikeCommentServlet extends HttpServlet {
 		
 		Like likeExists = LikeDAO.commentLikedByUser(commentId, loggedInUser.getUserName());
 		String returnStatus = "";
-		if(loggedInUser!=null) {
+		if(loggedInUser!=null && loggedInUser.getBlocked() != true) {
 			if(likeExists==null) {
 				Date likeDate = new Date();
 				int likeId =LikeDAO.getLikeId();

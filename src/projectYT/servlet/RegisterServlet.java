@@ -36,12 +36,15 @@ public class RegisterServlet extends HttpServlet {
 		String lol = request.getParameter("lol");
 		String profileUrl = request.getParameter("profileUrl");
 		String status = "success";
+		if(userName.equals("")||password.equals("")||email.equals("")) {
+			return;
+		}
 		User newUser = UserDAO.getUserByName(userName);
 		if(newUser!=null) status="taken";
 		else {
 			Date newDate = new Date();
 			String myNewDate = UserDAO.dateToStringForWrite(newDate);
-			//String basicProfileUrl = "http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png";
+			String basicProfileUrl = "http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png";
 			newUser = new User();
 			newUser.setUserName(userName);
 			newUser.setPassword(password);
@@ -54,12 +57,16 @@ public class RegisterServlet extends HttpServlet {
 			newUser.setRegistrationDate(myNewDate);
 			newUser.setProfileUrl(profileUrl);
 			newUser.setUserType(UserType.USER);
+			
 			if(lol.equals("true")) {
 				newUser.setLol(true);
 				HttpSession session = request.getSession();
 				session.setAttribute("channel", newUser);
 			}else {
 				newUser.setLol(false);
+				if(profileUrl.equals("")) {
+					newUser.setProfileUrl(basicProfileUrl);
+				}
 			}
 			UserDAO.addUser(newUser);
 		}

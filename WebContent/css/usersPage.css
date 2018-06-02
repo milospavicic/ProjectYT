@@ -132,7 +132,7 @@
         margin-left:  12%;
     } 
 }
-#editChannel-modal,#blockModal,#deleteModal,#unblockModal{
+#editChannel-modal,#blockModal,#deleteModal,#unblockModal,#succesEdit,#uploadPicModal{
     text-align: left;
 }
 .editUser{

@@ -134,11 +134,11 @@
                     <div class="modal-header">
                         <form action="RegisterServlet" method="post">
                             <div class="form-group">
-                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username" required/>
-                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password" required/>
+                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username*" required/>
+                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password*" required/>
                                 <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" required/>
                                 <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" required/>
-                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email" required/>
+                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email*" required/>
                                 <label for="rlol" id="rlou">Link or update : </label>
 		                    	<input type="checkbox" id="rlol" onchange="lolChanged()"/>
 		                    	<input type="text" id="registerPic" class="form-control" placeholder="Profile picture url" required/>
@@ -215,7 +215,22 @@
                 </div>
             </div>
         </div>
-        
+        <div class="modal fade" id="failModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="commEditTitle" class="modal-title">Error</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="commEditMessage">Something went wrong. Try again.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="newVideoModal">
             <div class="modal-dialog">
                 <div class="modal-content">

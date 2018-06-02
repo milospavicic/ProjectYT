@@ -34,7 +34,7 @@ public class LikeVideoServlet extends HttpServlet {
 		if(status.equals("liked")) likeOrDislike= true;
 		System.out.println(likeOrDislike);
 		String returnStatus = "";
-		if(loggedInUser!=null) {
+		if(loggedInUser!=null && loggedInUser.getBlocked() != true) {
 			Like likeExists = LikeDAO.videoLikedByUser(videoId, loggedInUser.getUserName());
 			if(likeExists==null) {
 				System.out.println("newLike: "+likeOrDislike);

@@ -59,14 +59,14 @@ public class UserDAO {
 		}
 		return null;
 	}
-	public static ArrayList<User> getAll() {
+	public static ArrayList<User> getAll(String orderBy) {
 		Connection conn = ConnectionMenager.getConnection();
 		
 		ArrayList<User> users=new ArrayList<User>();
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT * FROM users WHERE deleted = ?";
+			String query = "SELECT * FROM users WHERE deleted = ?" + orderBy;
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, false);
 			rset = pstmt.executeQuery();
@@ -124,10 +124,10 @@ public class UserDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "Select distinct(s.mainUser),count(s.mainUser) as broj,u.deleted from subscribe as s inner join users as u on s.mainUser=u.userName\r\n" + 
-					"where u.deleted = ?\r\n" + 
-					"group by s.mainUser\r\n" + 
-					"order by broj desc";
+			String query = "SELECT DISTINCT(s.mainUser), COUNT(s.mainUser) AS broj, u.deleted FROM subscribe AS s INNER JOIN users AS u ON s.mainUser=u.userName\r\n" + 
+					"WHERE u.deleted = ?\r\n" + 
+					"GROUP BY s.mainUser\r\n" + 
+					"ORDER BY broj DESC";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, false);
 			rset = pstmt.executeQuery();
@@ -194,14 +194,14 @@ public class UserDAO {
 		}
 		return null;
 	}
-	public static ArrayList<User> searchUsers(String parameter) {
+	public static ArrayList<User> searchUsers(String parameter,String orderBy) {
 		Connection conn = ConnectionMenager.getConnection();
 		
 		ArrayList<User> users=new ArrayList<User>();
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT * FROM users WHERE deleted = ? AND (userName LIKE ? OR firstName LIKE ? OR lastName LIKE ? OR email LIKE ? OR userType LIKE ?)";
+			String query = "SELECT * FROM users WHERE deleted = ? AND (userName LIKE ? OR firstName LIKE ? OR lastName LIKE ? OR email LIKE ? OR userType LIKE ?)" + orderBy;
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, false);
 			pstmt.setString(2, "%"+parameter+"%");
@@ -338,7 +338,7 @@ public class UserDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT Count(*) FROM subscribe WHERE mainUser = ?";
+			String query = "SELECT COUNT(*) FROM subscribe WHERE mainUser = ?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, userName);
 			rset = pstmt.executeQuery();
@@ -393,7 +393,7 @@ public class UserDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT COUNT(*) FROM subscribe WHERE mainUser = ? and subscriber = ?";
+			String query = "SELECT COUNT(*) FROM subscribe WHERE mainUser = ? AND subscriber = ?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, channel);
 			pstmt.setString(2, subs);

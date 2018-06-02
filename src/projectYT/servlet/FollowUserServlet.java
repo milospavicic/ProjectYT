@@ -16,41 +16,58 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import projectYT.dao.UserDAO;
 import projectYT.model.User;
 
-
 public class FollowUserServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		
+
 		ArrayList<String> list = new ArrayList<String>();
-		if(loggedInUser!=null) {
+		if (loggedInUser != null) {
 			list = UserDAO.userSubs(loggedInUser.getUserName());
 		}
 		Map<String, Object> data = new HashMap<>();
 		data.put("userSubs", list);
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonData = mapper.writeValueAsString(data);
-		System.out.println("Lista kanala koje prati : " +jsonData);
+		System.out.println("Lista kanala koje prati : " + jsonData);
 
 		response.setContentType("application/json");
 		response.getWriter().write(jsonData);
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		User subscriber = (User) session.getAttribute("loggedInUser");
-		
+
 		String channel = request.getParameter("userName");
 		String status = request.getParameter("status");
-		System.out.println("follow/unfollow "+channel+"	"+subscriber.getUserName()+" "+status);
-		if(status.equals("follow")) {
-			UserDAO.addSubs(channel, subscriber.getUserName());
+		System.out.println("follow/unfollow " + channel + "	" + subscriber.getUserName() + " " + status);
+		String endStatus = "";
+		try {
+			endStatus = "Success";
+			if (subscriber != null && subscriber.getBlocked() != true) {
+				if (status.equals("follow")) {
+					UserDAO.addSubs(channel, subscriber.getUserName());
+				} else {
+					UserDAO.deleteSubs(channel, subscriber.getUserName());
+				}
+			}
+		}catch (Exception e) {
+			endStatus = "failed";
 		}
-		else {
-			UserDAO.deleteSubs(channel, subscriber.getUserName());
-		}
+		
+		Map<String, Object> data = new HashMap<>();
+		data.put("endStatus", endStatus);
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonData = mapper.writeValueAsString(data);
+		System.out.println("Zavrseno ucitavanje video: " + jsonData);
+
+		response.setContentType("application/json");
+		response.getWriter().write(jsonData);
 	}
 
 }

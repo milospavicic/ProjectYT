@@ -48,7 +48,7 @@ public class LikeDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT likedislike.* FROM projectyt.likedislikevideo JOIN projectyt.likedislike on likeDislikevideo.likeId = likeDislike.id WHERE likeDislikevideo.deleted = ? AND likeDislike.deleted = ? AND owner=? AND videoId=?";
+			String query = "SELECT ld.* FROM likedislikevideo AS ldv JOIN likedislike AS ld ON ldv.likeId = ld.id WHERE ldv.deleted = ? AND ld.deleted = ? AND owner=? AND videoId=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, false);
 			pstmt.setBoolean(2, false);
@@ -244,7 +244,7 @@ public class LikeDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT * FROM projectyt.likedislikecomment JOIN projectyt.likedislike on likeDislikecomment.likeId = likeDislike.id WHERE likeDislikecomment.deleted = ? AND likeDislike.deleted=? AND owner=? AND commentId=?";
+			String query = "SELECT * FROM likedislikecomment AS ldc JOIN likedislike AS ld ON ldc.likeId = ld.id WHERE ldc.deleted = ? AND ld.deleted=? AND owner=? AND commentId=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, false);
 			pstmt.setBoolean(2, false);
@@ -310,12 +310,13 @@ public class LikeDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT likedislike.*,likedislikecomment.commentId FROM projectyt.likedislikecomment JOIN projectyt.likedislike on likeDislikecomment.likeId = likeDislike.id JOIN projectyt.comment on comment.id = commentId WHERE likeDislikecomment.deleted = ? AND likeDislike.deleted=? AND projectyt.likedislike.owner =?  AND projectyt.comment.videoId =? ";
+			String query = "SELECT ld.*,ldc.commentId FROM likedislikecomment AS ldc JOIN likedislike AS ld ON ldc.likeId = ld.id JOIN comment AS c ON c.id = commentId WHERE ldc.deleted = ? AND ld.deleted = ? AND c.deleted = ? AND ld.owner =? AND c.videoId = ? ";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, false);
 			pstmt.setBoolean(2, false);
-			pstmt.setString(3, userName);
-			pstmt.setInt(4, videoId);
+			pstmt.setBoolean(3, false);
+			pstmt.setString(4, userName);
+			pstmt.setInt(5, videoId);
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
 				int index = 1;

@@ -121,6 +121,38 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="succesEdit" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="succesEditTitle" class="modal-title">Edit</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="succesEditMessage">Edit has been succesfully saved!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="reloadPage()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="failModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="commEditTitle" class="modal-title">Error</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="commEditMessage">Something went wrong. Try again.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="register-modal">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
@@ -133,11 +165,11 @@
                     <div class="modal-header">
                         <form action="RegisterServlet" method="post">
                             <div class="form-group">
-                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username" required/>
-                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password" required/>
+                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username*" required/>
+                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password*" required/>
                                 <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" required/>
                                 <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" required/>
-                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email" required/>
+                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email*" required/>
                                 <label for="rlol" id="rlou">Link or update : </label>
 		                    	<input type="checkbox" id="rlol" onchange="lolChanged()"/>
 		                    	<input type="text" id="registerPic" class="form-control" placeholder="Profile picture url" required/>
@@ -318,12 +350,41 @@
                 </div>
             </div>
         </div>
-        
+                <div class="modal fade" id="uploadPicModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="uploadPicModalTitle" class="modal-title">Upload needed.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="uploadPicModalMessage">You must upload a picture.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="mainDiv">
             <div class="input-group" id="searchUserBar">
                 <input type="text" class="form-control" placeholder="Search users" autocomplete="off" id="searchUsers">
                 <span class="input-group-btn"><button class="btn btn-danger" onclick="searchUsersButton()">Submit</button></span>
             </div>
+            <select name="type" form="typeForm" id="selectSort" onchange="refreshUsers()">
+				 <option value="1">Username ASC</option>
+				 <option value="2">Username DESC</option>
+				 <option value="3">First Name ASC</option>
+				 <option value="4">First Name DESC</option>
+				 <option value="5">Last Name ASC</option>
+				 <option value="6">Last Name DESC</option>
+				 <option value="7">Email ASC</option>
+				 <option value="8">Email DESC</option>
+				 <option value="9">Role ASC</option>
+				 <option value="10">Role DESC</option>
+				 <option value="11">Status ASC</option>
+				 <option value="12">Status DESC </option>
+			</select>
             <div class="row">
                 <!--
                 <div class="col-md-12 col-sm-12 col-xs-12">

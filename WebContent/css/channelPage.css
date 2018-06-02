@@ -245,7 +245,7 @@
 .thumbnail{
     margin: 0 1px;
 }
-#editChannel-modal,#blockModal,#deleteModal{
+#editChannel-modal,#blockModal,#deleteModal,#unblockModal,#succesEdit,#uploadPicModal{
     text-align: left;
 }
 #welcomeVideo{

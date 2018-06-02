@@ -132,11 +132,11 @@
                     <div class="modal-header">
                         <form action="RegisterServlet" method="post">
                             <div class="form-group">
-                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username" required/>
-                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password" required/>
+                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username*" required/>
+                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password*" required/>
                                 <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" required/>
                                 <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" required/>
-                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email" required/>
+                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email*" required/>
                                 <label for="rlol" id="rlou">Link or update : </label>
 		                    	<input type="checkbox" id="rlol" onchange="lolChanged()"/>
 		                    	<input type="text" id="registerPic" class="form-control" placeholder="Profile picture url" required/>
@@ -151,7 +151,22 @@
                 </div>
             </div>
         </div>
-        
+        <div class="modal fade" id="succesEdit" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="succesEditTitle" class="modal-title">Edit</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="succesEditMessage">Edit has been succesfully saved!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="reloadPage()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="editComment-modal">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
@@ -258,6 +273,22 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="blockedVideoModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 class="modal-title">Blocked video.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>You can't perform this action, because this video has been blocked.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="blockedModal" role="dialog">
             <div class="modal-dialog modal-sm">
                   <!-- Modal content-->
@@ -360,11 +391,59 @@
                 </div>
             </div>
         </div>
+                <div class="modal fade" id="commentDel" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="commentDelTitle" class="modal-title">Delete</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="commentDelMessage">Comment deleted.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="commEdit" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="commEditTitle" class="modal-title">Edit</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="commEditMessage">Comment edited.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="failModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="commEditTitle" class="modal-title">Error</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="commEditMessage">Something went wrong. Try again.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="mainDiv">
             <div class="row">
                 <div class="col-md-8 col-sm-12 thumbnail">
-                    <div class="videoAndControl thumbnail">
-                        <iframe id="videoPlayer" width="100%" height="430" src="https://www.youtube.com/embed/so2s-NZVXZA?  autoplay=1&showinfo=0" frameborder="0" allowfullscreen></iframe>
+                    <div class="videoAndControl thumbnail" id="videoDiv">
+                        <!--<iframe id="videoPlayer" width="100%" height="430" src="https://www.youtube.com/embed/so2s-NZVXZA?" frameborder="0" allowfullscreen></iframe>-->
                     </div>
                     <div class="videoInfo ">
                         <h4 id="videoName"></h4>
@@ -382,10 +461,10 @@
                                 <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
                                 <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" ><span class="glyphicon glyphicon-option-horizontal"></span></button>
                                 <ul class="dropdown-menu" >
-                                    <li id="deleteOptionVideo"><a href="#deleteModal" data-toggle="modal">Delete video</a></li>
+                                    <li id="deleteOptionVideo"><a onclick="deleteVideoModal()" href="#" data-toggle="modal">Delete video</a></li>
                                     <li id="blockOptionVideo"><a href="#blockModal" data-toggle="modal">Block video</a></li>
                                     <li id="unblockOptionVideo"><a href="#unblockModal" data-toggle="modal">Unblock video</a></li>
-                                    <li id="editVideoOption"><a href="#editVideo-modal" data-toggle="modal">Edit video</a></li>
+                                    <li id="editVideoOption"><a onclick="fillEditVideo()" href="#">Edit video</a></li>
                                     <li><a href="#">Add to playlist</a></li>
                                 </ul>
                             </div>

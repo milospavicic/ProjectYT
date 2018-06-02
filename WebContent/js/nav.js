@@ -38,13 +38,14 @@ $('document').ready(function(e){
     		console.log(profileUrl);
     	}
         
+        if(rlol==true && $("#registerUploadPic")[0].files.length == 0){
+        	rlol = false;
+        }
+    	
         var regStatus = "";
-        if(uname == "" || pasw=="" || fname=="" || lname=="" || email==""){
-            $("#registerErrorMessage").text("All fields must be filled!");
+        if(uname == "" || pasw=="" || email==""){
+            $("#registerErrorMessage").text("Fields with * must be filled!");
             $("#badRegisterModal").modal(); 
-        }else if(rlol==false && profileUrl==""){
-            $("#registerErrorMessage").text("You must insert valid URL!");
-            $("#badRegisterModal").modal();
         }
         else{
         	$.get('RegisterServlet',{'userName': uname, 'password': pasw,'firstName': fname, 'lastName': lname,'email': email,"profileUrl":profileUrl,"lol":rlol},function(data){
@@ -106,7 +107,7 @@ function loginStatus(){
 	        navbarLoggedIn.style.display = "block";
 	        var temp = '<span class="glyphicon glyphicon-user"></span>'+" "+data.user.userName+" "+'<span class="caret"></span>';
 	        $("#userNameTab").html(temp);
-	        if(data.user.userType=="USER"){
+	        if(data.user.userType=="USER" || data.user.blocked==true){
 	            var usersTabInDropdown = document.getElementById("users");
 	            usersTabInDropdown.style.display = "none";
 		        $('#deleteOptionVideo').hide();
@@ -132,16 +133,20 @@ function search(){
 	event.preventDefault()
 }
 function saveNewVideo(){
-	var videoUrl = $('#newVideoUrl').val();
-	var title = $('#newVideoName').val();
-	var desc = $('#newDescription').val();
-	var picurl = $('#newPicUrl').val();
+	var videoUrl = $('#newVideoUrl').val().trim();
+	var title = $('#newVideoName').val().trim();
+	var desc = $('#newDescription').val().trim();
+	var picurl = $('#newPicUrl').val().trim();
 	var visib = $('#selectVisib').val();
 	var comm = $('#selectCE').val();
 	var rating = $('#selectRE').val();
 	
 	$.post('VideoServlet',{"status":"newVideo","videoUrl":videoUrl,"title":title,"desc":desc,"picurl":picurl,"visib":visib,"comm":comm,"rating":rating},function(data){
-		location.reload();
+		if(data.endStatus =="addSuccess"){
+			document.location.href = "videoPage.html?id="+data.videoId;
+		}else{
+			$('#failModal').modal();
+		}
 	});
 }
 
@@ -156,4 +161,8 @@ function uploadPicture(){
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "UploadPictureServlet");
     xhr.send(formData);
+}
+
+function reloadPage(){
+	location.reload();
 }

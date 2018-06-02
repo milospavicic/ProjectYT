@@ -271,7 +271,7 @@ public class VideoDAO {
 		ResultSet rset = null;
 		try {
 			if(queryType==false) {
-				String query = "SELECT * FROM video AS V INNER JOIN users AS U ON V.owner=U.userName WHERE visibility = ? AND V.deleted = ? AND V.blocked = ? AND U.deleted = ? AND U.blocked = ? AND owner = ? "+orderBy;
+				String query = "SELECT * FROM video AS V INNER JOIN users AS U ON V.owner=U.userName WHERE visibility = ? AND V.deleted = ? AND U.deleted = ? AND V.blocked = ? AND U.blocked = ? AND owner = ? "+orderBy;
 				pstmt = conn.prepareStatement(query);
 				pstmt.setString(1, "PUBLIC");
 				pstmt.setBoolean(2, false);
@@ -336,7 +336,7 @@ public class VideoDAO {
 		ResultSet rset = null;
 		try {
 			if(queryType==false) {
-				String query = "SELECT v.* FROM likedislikevideo AS A INNER JOIN likedislike AS B ON A.likeId=B.id INNER JOIN video as V ON A.videoId=V.id INNER JOIN users AS U ON V.owner=U.userName WHERE V.visibility = ? AND  V.deleted = ? AND V.blocked = ? AND U.deleted = ? AND U.blocked = ?  AND B.owner=? ";
+				String query = "SELECT v.* FROM likedislikevideo AS A INNER JOIN likedislike AS B ON A.likeId=B.id INNER JOIN video AS V ON A.videoId=V.id INNER JOIN users AS U ON V.owner=U.userName WHERE V.visibility = ? AND  V.deleted = ? AND V.blocked = ? AND U.deleted = ? AND U.blocked = ?  AND B.owner=? ";
 				pstmt = conn.prepareStatement(query);
 				pstmt.setString(1, "PUBLIC");
 				pstmt.setBoolean(2, false);

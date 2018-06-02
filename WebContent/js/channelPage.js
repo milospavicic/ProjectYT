@@ -5,6 +5,10 @@ var subsNumber = 0;
 var blocked = false;
 $('document').ready(function(e){
 	var tempName = window.location.search.slice(1).split('&')[0].split('=')[1];
+	if (typeof tempName == 'undefined'){
+		errorPage();
+		return;
+	}
 	channelName = tempName;
 	document.title = ''+channelName+' - MyTube';
 	showRecentVideos(1);
@@ -14,15 +18,19 @@ $('document').ready(function(e){
         $(this).addClass('active');
     });
     $('#userVideos').click(function(){
+    	showOrder();
         showRecentVideos(1);
     });
     $('#userLiked').click(function(){
+    	hideOrder();
     	showLikes();
     });
     $('#userInfo').click(function(){
+    	hideOrder();
         showInfo();
     });
     $('#userFollow').click(function(){
+    	hideOrder();
     	showFollowing();
     });
     
@@ -34,39 +42,84 @@ function saveEditUser(){
 	var password = $('#editPassword').val();
 	var email = $('#editEmail').val();
 	var channelDescription = $('#editDescription').val();
+	
 	var lol = false;
 	if($('#lol').is(':checked')){
 		lol =true;
-		var profileUrl = null;
+		if($("#editUploadPic")[0].files.length == 0){
+			console.log("Keep old pic");
+			if(channelPage.lol==false){
+				$('#uploadPicModal').modal();
+				return;
+			}else{
+				var profileUrl=channelPage.profileUrl;
+			}
+			var newFile = false;
+		}else{
+			var profileUrl="";
+			var newFile = true;
+		}
 	}else{
-		var profileUrl = $('#editPicUrl').val();
+		var profileUrl = $('#editPicUrl').val().trim();
+		var newFile = false;
 	}
 	
 	if(loggedInUser!=null){
 		if(loggedInUser.userType=="ADMIN"){
 			var userType = $('#selectType').val();
-			$.post('ChannelServlet',{"status":"edit","channelName":channelPage.userName,"firstName":firstName,"lastName":lastName,"password":password,"email":email,"profileUrl":profileUrl,"channelDescription":channelDescription,"userType":userType,"lol":lol},function(data){
-				if($('#lol').is(':checked'))
-					editUploadPicture();
-				location.reload();
+			$.post('ChannelServlet',{"status":"edit","channelName":channelPage.userName,"firstName":firstName,"lastName":lastName,"password":password,"email":email,"profileUrl":profileUrl,"channelDescription":channelDescription,"userType":userType,"lol":lol,"newFile":newFile},function(data){
+				if(data.endStatus=="editSuccess"){
+					if(newFile==true){
+						editUploadPicture();
+					}
+					$('#editChannel-modal').hide();
+					$('#succesEdit').modal();
+				}else{
+					$('#failModal').modal();
+				}
+				
 			});
 		}else{
-			$.post('ChannelServlet',{"status":"edit","channelName":channelPage.userName,"firstName":firstName,"lastName":lastName,"password":password,"email":email,"profileUrl":profileUrl,"channelDescription":channelDescription,"lol":lol},function(data){
-				if($('#lol').is(':checked'))
-					editUploadPicture();
-				location.reload();
+			$.post('ChannelServlet',{"status":"edit","channelName":channelPage.userName,"firstName":firstName,"lastName":lastName,"password":password,"email":email,"profileUrl":profileUrl,"channelDescription":channelDescription,"lol":lol,"newFile":newFile},function(data){
+				if(data.endStatus=="editSuccess"){
+					if(newFile==true){
+						editUploadPicture();
+					}
+					$('#editChannel-modal').hide();
+					$('#succesEdit').modal();
+				}else{
+					$('#failModal').modal();
+				}
 			});
 		}
 	}	
 }
 function deleteUser(){
-	$.post('ChannelServlet',{"status":"delete","channelName":channelName},function(data){location.reload();});
+	$.post('ChannelServlet',{"status":"delete","channelName":channelName},function(data){
+		if(data.endStatus=="deleteSuccess"){
+			location.reload();
+		}else{
+			$('#failModal').modal();
+		}
+	});
 }
 function blockUser(){
-	$.post('ChannelServlet',{"status":"block","channelName":channelName},function(data){location.reload();});
+	$.post('ChannelServlet',{"status":"block","channelName":channelName},function(data){		
+		if(data.endStatus=="blockSuccess"){
+			location.reload();
+		}else{
+			$('#failModal').modal();
+		}
+	});
 }
 function unblockUser(){
-	$.post('ChannelServlet',{"status":"unblock","channelName":channelName},function(data){location.reload();});
+	$.post('ChannelServlet',{"status":"unblock","channelName":channelName},function(data){		
+		if(data.endStatus=="unblockSuccess"){
+			location.reload();
+		}else{
+			$('#failModal').modal();
+		}
+	});
 }
 function follow(){
 	console.log("followUser")
@@ -80,19 +133,30 @@ function follow(){
 	}
     var tempName = $("#followButton");
     if(tempName.text() == "Follow"){
-    	tempName.text("Unfollow");
-    	tempName.attr('class', 'btn btn-default');
-    	subsNumber +=1;
-    	$('#followers').empty();
-    	$('#followers').append('<p>Followers: '+subsNumber+'</p>');
-        $.post('FollowUserServlet',{"userName":channelName,"status":"follow"},function(data){});
+        $.post('FollowUserServlet',{"userName":channelName,"status":"follow"},function(data){
+        	if(data.endStatus=="Success"){
+        		tempName.text("Unfollow");
+            	tempName.attr('class', 'btn btn-default');
+            	subsNumber +=1;
+            	$('#followers').empty();
+            	$('#followers').append('<p>Followers: '+subsNumber+'</p>');
+        	}else{
+        		$('#failModal').modal();
+        	}
+        	
+        });
     }else{
-    	tempName.text("Follow");
-    	tempName.attr('class', 'btn btn-danger');
-    	subsNumber -=1;
-    	$('#followers').empty();
-    	$('#followers').append('<p>Followers: '+subsNumber+'</p>');
-        $.post('FollowUserServlet',{"userName":channelName,"status":"unfollow"},function(data){});
+        $.post('FollowUserServlet',{"userName":channelName,"status":"unfollow"},function(data){
+        	if(data.endStatus=="Success"){
+            	tempName.text("Follow");
+            	tempName.attr('class', 'btn btn-danger');
+            	subsNumber -=1;
+            	$('#followers').empty();
+            	$('#followers').append('<p>Followers: '+subsNumber+'</p>');
+        	}else{
+        		$('#failModal').modal();
+        	}
+        });
     }
 }
 
@@ -161,9 +225,14 @@ function showFollowing(){
 			
 		}else{
 		    for(it in following){
+		    	if(following[it].lol==true){
+		    		var profilePic = "pictures/"+following[it].profileUrl;
+		    	}else{
+		    		var profilePic = following[it].profileUrl;
+		    	}
 		    	myDiv.append('<div class="col-md-4">'+
 						'<a href="channelPage.html?channel='+following[it].userName+'" target="_self">'+
-						'<img id="videoImage" src="'+following[it].profileUrl+'" alt="video" style="width:100%">'+
+						'<img id="videoImage" src="'+profilePic+'" alt="video" style="width:100%">'+
 						'<div class="caption">'+
 							'<p id="titleBar">'+following[it].userName+'</p>'+
 						'</div>'+
@@ -269,7 +338,7 @@ function initEdit(channel,currentUser,following){
 	if(channel.lol==true){
 		var profilePic = "pictures/"+channel.profileUrl;
 	}else{
-		var profilePic = +channel.profileUrl;
+		var profilePic = channel.profileUrl;
 	}
 	$('#profileImage').attr("src",profilePic);
 	
@@ -278,7 +347,7 @@ function initEdit(channel,currentUser,following){
 	$('#editLastName').val(channel.lastName);
 	$('#editPassword').val(channel.password);
 	$('#editEmail').val(channel.email);
-	$('#editPicUrl').val(channel.profileUrl);
+	
 
 	if(channel.lol == true){
 		$("#lol").prop("checked", true);
@@ -286,14 +355,16 @@ function initEdit(channel,currentUser,following){
 	}else{
 		$('#editPicUrl').val(channel.profileUrl);
 		$('#editUploadPic').hide();
+		$('#editPicUrl').val(channel.profileUrl);
 	}
 	
 	$('#editDescription').val(channel.channelDescription);
+	
 	if(channel.userType==("ADMIN")){
 		$('#selectType option[value=2]').attr('selected',true);
 	}
 	if(currentUser!=null){
-		if(currentUser.userType!="ADMIN"){
+		if(currentUser.userType!="ADMIN" || currentUser.userName==channel.userName){
 			$('#userTypeSelect').hide();
 		}
 	}
@@ -307,10 +378,19 @@ function lolChanged(){
     $("#editPicUrl").toggle();
 }
 function editUploadPicture(){
+	console.log("editUploadPicture()");
     var formData = new FormData();
     var fileField = document.querySelector("#editUploadPic");
     formData.append("file",fileField.files[0]);
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "UploadPictureServlet");
     xhr.send(formData);
+}
+function showOrder(){
+	$("#h4Tittle").show();
+	$("#orderVideosSelect").show();
+}
+function hideOrder(){
+	$("#h4Tittle").hide();
+	$("#orderVideosSelect").hide();
 }
