@@ -39,8 +39,11 @@ public class RegisterServlet extends HttpServlet {
 		if(userName.equals("")||password.equals("")||email.equals("")) {
 			return;
 		}
-		User newUser = UserDAO.getUserByName(userName);
-		if(newUser!=null) status="taken";
+		User newUser = UserDAO.usernameTaken(userName);
+		if(newUser!=null) {
+			System.out.println("taken");
+			status="taken";
+		}
 		else {
 			Date newDate = new Date();
 			String myNewDate = UserDAO.dateToStringForWrite(newDate);

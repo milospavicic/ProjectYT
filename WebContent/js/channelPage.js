@@ -37,11 +37,11 @@ $('document').ready(function(e){
 });
 
 function saveEditUser(){
-	var firstName = $('#editFirstName').val();
-	var lastName = $('#editLastName').val();
-	var password = $('#editPassword').val();
-	var email = $('#editEmail').val();
-	var channelDescription = $('#editDescription').val();
+	var firstName = $('#editFirstName').val().trim();
+	var lastName = $('#editLastName').val().trim();
+	var password = $('#editPassword').val().trim();
+	var email = $('#editEmail').val().trim();
+	var channelDescription = $('#editDescription').val().trim();
 	
 	var lol = false;
 	if($('#lol').is(':checked')){

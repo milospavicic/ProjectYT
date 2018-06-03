@@ -221,7 +221,7 @@ $(document).ready(function(e) {
     		$("#blockedVideoModal").modal('toggle');
     		return;
     	}
-    	var commentText = $('#myCommentText').val();
+    	var commentText = $('#myCommentText').val().trim();
     	if(commentText=="") return;
     	$.post('CommentsServlet',{"status":"new","videoId":videoId,"commentText":commentText},function(data){
     		if(data.endStatus=="newSuccess"){
@@ -342,7 +342,7 @@ function editCommentButton(){
 		$("#blockedVideoModal").modal('toggle');
 		return;
 	}
-	var commentText = $('#editCommentText').val();
+	var commentText = $('#editCommentText').val().trim();
 	$.post('CommentsServlet',{"status":"edit","commentText":commentText,"commentId":editCommentId},function(data){
 		if(data.endStatus=="editSuccess"){
 			$('#editComment-modal').modal('hide');
@@ -455,8 +455,8 @@ function saveEditVideo(){
 		$("#blockedVideoModal").modal('toggle');
 		return;
 	}
-	var desc = $('#editDescription').val();
-	var picurl = $('#editPicUrl').val();
+	var desc = $('#editDescription').val().trim();
+	var picurl = $('#editPicUrl').val().trim();
 	var visib = $('#selectOne').val();
 	var comm = $('#selectTwo').val();
 	var rating = $('#selectThree').val();

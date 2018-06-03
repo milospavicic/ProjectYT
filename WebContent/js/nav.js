@@ -32,15 +32,15 @@ $('document').ready(function(e){
     	var rlol = false;
     	if($('#rlol').is(':checked')){
     		rlol =true;
-    		var profileUrl = null;
+    		var profileUrl = "";
+    		if($("#registerUploadPic")[0].files.length == 0){
+    			$('#regUploadPicModal').modal();
+    			return;
+    		}
     	}else{
     		var profileUrl = $('#registerPic').val().trim();
     		console.log(profileUrl);
     	}
-        
-        if(rlol==true && $("#registerUploadPic")[0].files.length == 0){
-        	rlol = false;
-        }
     	
         var regStatus = "";
         if(uname == "" || pasw=="" || email==""){

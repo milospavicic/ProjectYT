@@ -14,6 +14,46 @@ import projectYT.model.User;
 import projectYT.model.User.UserType;
 
 public class UserDAO {
+	public static User usernameTaken(String userName) {
+
+		Connection conn = ConnectionMenager.getConnection();
+		
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		try {
+			String query = "SELECT * FROM users WHERE userName = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, userName);
+			rset = pstmt.executeQuery();
+			if (rset.next()) {
+				int index = 2;
+				String password = rset.getString(index++);
+				String firstName = rset.getString(index++);
+				String lastName = rset.getString(index++);
+				String email = rset.getString(index++);
+				String channelDescription = rset.getString(index++);
+				UserType userType = UserType.valueOf(rset.getString(index++));
+				Date date= rset.getDate(index++);
+				String registrationDate = dateToString(date);
+				boolean blocked = rset.getBoolean(index++);
+				boolean deleted = rset.getBoolean(index++);
+				String profileUrl = rset.getString(index++);
+				boolean lol = rset.getBoolean(index++);
+				User newUser = new User(userName, password, firstName, lastName, email, channelDescription, registrationDate, blocked, null, null, null, userType,deleted,profileUrl,lol);
+				pstmt.close();
+				rset.close();
+				return newUser;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		return null;
+	}
+	
 	public static User getUserByName(String userName) {
 
 		Connection conn = ConnectionMenager.getConnection();
