@@ -49,6 +49,7 @@ $('document').ready(function(e){
         }
         else{
         	$.get('RegisterServlet',{'userName': uname, 'password': pasw,'firstName': fname, 'lastName': lname,'email': email,"profileUrl":profileUrl,"lol":rlol},function(data){
+        		console.log(data.status);
         		if(data.status=="taken"){
                     $("#registerErrorMessage").text("Already used username!");
                     $("#badRegisterModal").modal(); 
@@ -140,8 +141,24 @@ function saveNewVideo(){
 	var visib = $('#selectVisib').val();
 	var comm = $('#selectCE').val();
 	var rating = $('#selectRE').val();
+	var lod = false;
+	if($('#lod').is(':checked')){
+		picurl = "def";
+		lod = true;
+	}
 	
-	$.post('VideoServlet',{"status":"newVideo","videoUrl":videoUrl,"title":title,"desc":desc,"picurl":picurl,"visib":visib,"comm":comm,"rating":rating},function(data){
+	if(videoUrl == "" || title == "" || picurl == ""){
+		$('#fillAllModal').modal();
+		return;
+	}
+	
+	var newUrl = validateYouTubeUrl(videoUrl);
+	if(newUrl==null){
+		$('#invalidLinkModal').modal();
+		return;
+	}
+	
+	$.post('VideoServlet',{"status":"newVideo","videoUrl":newUrl,"title":title,"desc":desc,"picurl":picurl,"visib":visib,"comm":comm,"rating":rating,"lod":lod},function(data){
 		if(data.endStatus =="addSuccess"){
 			document.location.href = "videoPage.html?id="+data.videoId;
 		}else{
@@ -149,7 +166,22 @@ function saveNewVideo(){
 		}
 	});
 }
-
+function validateYouTubeUrl(videoUrl)
+{
+    if (videoUrl != undefined || videoUrl != '') {
+        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+        var match = videoUrl.match(regExp);
+        if (match && match[2].length == 11) {
+            var validLink = 'https://www.youtube.com/embed/' + match[2] + '?autoplay=0';
+            return validLink;
+        }
+        else {
+            return null
+        }
+    }else{
+    	return null;
+    }
+}
 function lolChanged(){
     $("#registerUploadPic").toggle();
     $("#registerPic").toggle();
@@ -165,4 +197,8 @@ function uploadPicture(){
 
 function reloadPage(){
 	location.reload();
+}
+
+function hideShowLink(){
+	$('#newPicUrl').toggle();
 }

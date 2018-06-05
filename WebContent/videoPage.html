@@ -15,7 +15,6 @@
     <body>
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
-
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#toggleMenu" id="mytoggle">
                         <span class="icon-bar"></span>
@@ -24,7 +23,6 @@
                     </button>
                     <a class="navbar-brand" href="index.html">MyTube</a>
                 </div>
-
                 <div class="collapse navbar-collapse" id="toggleMenu">
                     <form class="navbar-form navbar-left" role="search" action="searchPage.html">
                         <div class="form-group-sm">
@@ -34,7 +32,6 @@
                             </div>
                         </div>
                     </form>
-                
                     <ul class="nav navbar-nav navbar-right" id="navbarNotLoggedIn">
                         <li><a  data-toggle="modal" href="#login-modal" ><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                         <li><a  data-toggle="modal" href="#register-modal"><span class="glyphicon glyphicon-user" ></span> Register</a></li>
@@ -45,7 +42,6 @@
                             </ul>
                         </li>
                     </ul>
-                  
                     <ul class="nav navbar-nav navbar-right" id="navbarLoggedIn">
                         <li><a href="#newVideoModal" data-toggle="modal" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
                         <li class="dropdown">
@@ -105,8 +101,8 @@
                     <div class="modal-header">
                         <form role="form">
                             <div class="form-group">
-                                <input type="username" name="uname" id="usernameLogin" class="form-control" placeholder="Username" required/>
-                                <input type="password" name="passw" id="passwordLogin" class="form-control" placeholder="Password" required/>
+                                <input type="username" name="uname" id="usernameLogin" class="form-control" placeholder="Username" maxlength="15" required/>
+                                <input type="password" name="passw" id="passwordLogin" class="form-control" placeholder="Password" maxlength="15" required/>
                             </div>
                         </form>
                     </div>
@@ -132,14 +128,14 @@
                     <div class="modal-header">
                         <form action="RegisterServlet" method="post">
                             <div class="form-group">
-                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username*" required/>
-                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password*" required/>
-                                <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" required/>
-                                <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" required/>
-                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email*" required/>
+                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username*" maxlength="15" required/>
+                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password*" maxlength="15" required/>
+                                <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" maxlength="15"/>
+                                <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" maxlength="15"/>
+                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email*" maxlength="30" required/>
                                 <label for="rlol" id="rlou">Link or update : </label>
 		                    	<input type="checkbox" id="rlol" onchange="lolChanged()"/>
-		                    	<input type="text" id="registerPic" class="form-control" placeholder="Profile picture url" required/>
+		                    	<input type="text" id="registerPic" class="form-control" placeholder="Profile picture url" maxlength="300" required/>
 		                    	<input type="file" name="pic" accept="image/*" id="registerUploadPic"/>
                             </div>
                         </form>
@@ -147,6 +143,22 @@
                     <!-- footer -->
                     <div class="modal-footer">
                         <button class="btn btn-danger btn-block" id="registerSubmit">Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="badRegisterModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="registerErrorTitle" class="modal-title">Register.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="registerErrorMessage">All fields must be filled!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -195,7 +207,7 @@
                     <div class="modal-header">
                         <form role="form">
                             <div class="form-group">
-                               <textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="editCommentText" rows="4"></textarea>
+                               <textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="editCommentText" maxlength="500" rows="4"></textarea>
                             </div>
                         </form>
                     </div>
@@ -206,7 +218,6 @@
                 </div>
             </div>
         </div>
-        
          <div class="modal fade" id="editVideo-modal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -258,10 +269,12 @@
                     </div>
                     <!-- body -->
                     <div class="modal-header">
-                    	<input type="text" id="newVideoUrl" class="form-control" placeholder="Video url" required/>
-                    	<input type="text" id="newVideoName" class="form-control" placeholder="Title" required/>
-                    	<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="newDescription" rows="4" placeholder="Description"></textarea>
-                    	<input type="text" id="newPicUrl" class="form-control" placeholder="Picture url" required/>
+                    	<input type="text" id="newVideoUrl" class="form-control" placeholder="Video url*" maxlength="100" required/>
+                    	<input type="text" id="newVideoName" class="form-control" placeholder="Title*" maxlength="80" required/>
+                    	<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="newDescription" maxlength="500" rows="4" placeholder="Description"></textarea>
+                    	<label for="lod" id="lodl">Default video picture : </label>
+		                <input type="checkbox" id="lod" onchange="hideShowLink()"/>
+                    	<input type="text" id="newPicUrl" class="form-control" placeholder="Picture url*" maxlength="200" required/>
                     	<hr>
                     	<p class="newVideoTitle">Visibility</p>
                     	<select name="visibility" form="visibilityForm" class="newOption" id="selectVisib">
@@ -407,7 +420,7 @@
                 </div>
             </div>
         </div>
-                <div class="modal fade" id="commentDel" role="dialog">
+        <div class="modal fade" id="commentDel" role="dialog">
             <div class="modal-dialog modal-sm">
                   <!-- Modal content-->
                 <div class="modal-content">
@@ -455,6 +468,38 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="invalidLinkModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="invalidLinkTitle" class="modal-title">Invalid link.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="invalidLinkMessage">You must insert a valid link.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        <div class="modal fade" id="fillAllModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="fillAllModalTitle" class="modal-title">New video.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="fillAllModalMessage">You must fill all fields with *.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="mainDiv">
             <div class="row">
                 <div class="col-md-8 col-sm-12 thumbnail">
@@ -466,7 +511,6 @@
                         <div class="viewsAndButton">
                             <p class="viewsCounter" id="vCounter"></p>
                         </div>
-
                         <div class="viewsAndButton" id="buttonsDiv">
                             <div class="btn-group" id="ldBtnGroup">
                                 <button type="button" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span></button>
@@ -485,7 +529,6 @@
                                 </ul>
                             </div>
                         </div>
-
                         <div class="description" id="desc">
                         	<!--  
                             <a href="channelPage.html"><img src="pictures/1.jpg" alt="Lights" style="width:70px;height: 70px"></a>
@@ -515,12 +558,10 @@
                             <button id="myCommentButton" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#myComment" >Comment</button>
                             <button id="hideShowBtn" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#commentSection">Show Comments</button>
                         </div>
-
                         <div class="collapse" id="myComment">
-                            <textarea id="myCommentText" rows="4" cols="50"></textarea>
+                            <textarea id="myCommentText" rows="4" maxlength="500" cols="50"></textarea>
                             <button id="myFormButton" class="btn btn-default">Submit</button>
                         </div>
-                        
                         <div class="collapse" id="commentSection">
                             <div class="commentRow">
                                 <!--
@@ -541,8 +582,7 @@
                                 </div>  
                             </div>
                                 -->
-                            </div> 
-
+                            </div>
                         </div>
                     </div>
                 </div>

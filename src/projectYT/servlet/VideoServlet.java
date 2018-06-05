@@ -34,7 +34,7 @@ public class VideoServlet extends HttpServlet {
 		int videoId = Integer.parseInt(request.getParameter("videoId"));
 		Video video = VideoDAO.getVideo(videoId);
 		if(video != null) {
-			System.out.println(video + " videoooo");
+			System.out.println(video + " videoooo by id " + videoId);
 			int tempViews = video.getViews();
 			video.setViews(tempViews + 1);
 			VideoDAO.updateVideo(video);
@@ -46,13 +46,13 @@ public class VideoServlet extends HttpServlet {
 		if (loggedInUser != null) {
 			likedVideo = LikeDAO.videoLikedByUser(videoId, loggedInUser.getUserName());
 			if (loggedInUser.getUserType() == UserType.ADMIN) {
-				recommended = VideoDAO.getRecommended(true);
+				recommended = VideoDAO.getRecommended(true,videoId);
 				System.out.println("admin");
 			} else {
-				recommended = VideoDAO.getRecommended(false);
+				recommended = VideoDAO.getRecommended(false,videoId);
 			}
 		} else {
-			recommended = VideoDAO.getRecommended(false);
+			recommended = VideoDAO.getRecommended(false,videoId);
 		}
 
 		Map<String, Object> data = new HashMap<>();
@@ -165,6 +165,10 @@ public class VideoServlet extends HttpServlet {
 					String newTitle = request.getParameter("title");
 					String newDesc = request.getParameter("desc");
 					String newPicUrl = request.getParameter("picurl");
+					String lod = request.getParameter("lod");
+					if(lod.equals("true")) {
+						newPicUrl = "pictures/noimage.jpg";
+					}
 					int newVisib = Integer.parseInt(request.getParameter("visib"));
 					int newComm = Integer.parseInt(request.getParameter("comm"));
 					int newRating = Integer.parseInt(request.getParameter("rating"));

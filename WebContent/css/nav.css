@@ -196,3 +196,6 @@ RESENO SA margin: 0;
 	text-align: left;
 	display:inline-block;
 }
+#fillAllModal,#invalidLinkModal,#newVideoModal{
+	text-align: left;
+}

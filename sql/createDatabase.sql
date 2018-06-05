@@ -56,9 +56,9 @@ INSERT INTO subscribe(mainUser,subscriber)VALUES('zoran','123');
 CREATE TABLE video(
 id BIGINT AUTO_INCREMENT,
 videoUrl VARCHAR(100) NOT NULL,
-pictureUrl VARCHAR(100) NOT NULL,
-videoName VARCHAR(50) NOT NULL,
-description VARCHAR(50),
+pictureUrl VARCHAR(200) NOT NULL,
+videoName VARCHAR(80) NOT NULL,
+description VARCHAR(500),
 visibility ENUM ('PRIVATE','PUBLIC','UNLISTED') NOT NULL,
 blocked BOOLEAN NOT NULL DEFAULT FALSE,
 commentsEnabled BOOLEAN NOT NULL DEFAULT TRUE,
@@ -72,36 +72,36 @@ deleted BOOLEAN NOT NULL DEFAULT FALSE,
 PRIMARY KEY (id),
 FOREIGN KEY (owner) REFERENCES users(userName) ON DELETE RESTRICT
 );
-
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
-,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0CbN8sfihY','https://s.aolcdn.com/hss/storage/midas/8c786b6e2ab90b7d527621886ee9ff4d/205751517/sw-tlj-ed.jpg','Temp Name',
-'Best movie123','PUBLIC',false,true,true,124,11,22314,'2018-4-4','marko',false);
+,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0CbN8sfihY','https://s.aolcdn.com/hss/storage/midas/8c786b6e2ab90b7d527621886ee9ff4d/205751517/sw-tlj-ed.jpg','Star Wars: The Last Jedi Trailer',
+'Watch the new trailer for Star Wars: The Last Jedi and see it in theaters December 15.','PUBLIC',false,true,true,1244,11,1942,'2018-3-4','marko',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
-,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0CbN8sfihY','https://s.aolcdn.com/hss/storage/midas/8c786b6e2ab90b7d527621886ee9ff4d/205751517/sw-tlj-ed.jpg','Temp Name',
-'Best movie123','PUBLIC',false,true,true,124,11,22314,'2018-3-4','marko',false);
+,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/qxjPjPzQ1iU','https://i.ytimg.com/vi/h5XQq1ulspc/maxresdefault.jpg','War for the Planet of the Apes',
+'Directed By Matt Reeves
+Cast: Andy Serkis, Woody Harrelson, Steve Zahn, Amiah Miller, Karin Konoval, Judy Greer and Terry Notary','PUBLIC',false,true,true,124,11,22314,'2018-4-4','marko',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
-,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0CbN8sfihY','https://s.aolcdn.com/hss/storage/midas/8c786b6e2ab90b7d527621886ee9ff4d/205751517/sw-tlj-ed.jpg','Temp Name',
-'Best movie123','PUBLIC',false,true,true,124,11,22314,'2018-2-4','marko',false);
+,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/6ZfuNTqbHE8','https://pixel.nymag.com/imgs/daily/vulture/2018/03/20/avenger/20-avengers-lede.w710.h473.jpg','Marvel Studios\' Avengers: Infinity War Official Trailer',
+'"There was an idea…" Avengers: Infinity War. In theaters April 27.','PUBLIC',false,true,true,4142,121,5451,'2018-2-4','marko',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
-,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0CbN8sfihY','https://s.aolcdn.com/hss/storage/midas/8c786b6e2ab90b7d527621886ee9ff4d/205751517/sw-tlj-ed.jpg','Temp Name',
-'Best movie123','PUBLIC',false,true,true,124,11,22314,'2018-1-4','marko',false);
+,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/MWRUNTLisPo','https://i.ytimg.com/vi/31lEwIF6AcI/maxresdefault.jpg','DOCTOR STRANGE Official Trailer (Marvel - 2016 )',
+'After his career is destroyed, a brilliant but arrogant and conceited surgeon gets a new lease on life when a sorcerer takes him under his wing and trains him to defend the world against evil. ','PRIVATE',false,true,true,412,82,1251,'2018-1-4','marko',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
-,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0CbN8sfihY','https://s.aolcdn.com/hss/storage/midas/8c786b6e2ab90b7d527621886ee9ff4d/205751517/sw-tlj-ed.jpg','Temp Name',
-'Best movie123','PUBLIC',false,true,true,124,11,22314,'2017-4-4','marko',false);
+,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/5OVY7MmSSYs','http://demofest.org/wp-content/uploads/2017/03/Bad-Copy-4-2.jpg','bad copy - esi mi dobar',
+'"I kad mi pridje neki smarac ja mu kazem odma, esi mi Boban, e, esi mi Boban.."','PUBLIC',false,true,true,424,21,600,'2017-4-4','pera',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
-,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0CbN8sfihY','https://s.aolcdn.com/hss/storage/midas/8c786b6e2ab90b7d527621886ee9ff4d/205751517/sw-tlj-ed.jpg','Temp Name',
-'Best movie123','PUBLIC',false,true,true,124,11,22314,'2017-3-4','marko',false);
+,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/vhbMbiYb5bg','https://lths.news/wp-content/uploads/2018/02/Greta-Van-Fleet.jpg','Greta Van Fleet - Black Smoke Rising',
+'Greta Van Fleet is an American rock band from Frankenmuth, Michigan, formed in 2012.','UNLISTED',false,true,true,421,123,1244,'2017-3-4','pera',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
-,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0CbN8sfihY','https://s.aolcdn.com/hss/storage/midas/8c786b6e2ab90b7d527621886ee9ff4d/205751517/sw-tlj-ed.jpg','Temp Name',
-'Best movie123','PUBLIC',false,true,true,124,11,22314,'2017-2-4','marko',false);
+,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/3BXDsVD6O10','https://e.snmc.io/lk/l/l/0c5f19d420aa434d0b86dbd872e08e24/6821082.jpg','Eminem - River (Audio) ft. Ed Sheeran',
+'Eminem\'s track "River" ft. Ed Sheeran is available on the album \'Revival,\' out now: http://shady.sr/Revival','PUBLIC',false,true,true,5523,522,8345,'2017-2-4','stanko',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
-,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0CbN8sfihY','https://s.aolcdn.com/hss/storage/midas/8c786b6e2ab90b7d527621886ee9ff4d/205751517/sw-tlj-ed.jpg','Temp Name',
-'Best movie123','PUBLIC',false,true,true,124,11,22314,'2017-1-4','marko',false);
+,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0oIoR9mLwc','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWbta65PJ9nZFAC1O3sEA_qgt6xjJTvUXSSp2FZ4DH8pU7Btpo','Red Hot Chili Peppers - Dark Necessities [OFFICIAL VIDEO]',
+'Watch the music video for “Dark Necessities” now! ','PUBLIC',false,true,true,1234,453,2351,'2017-1-4','stanko',false);
 
 
 CREATE TABLE comment(
 id BIGINT AUTO_INCREMENT,
-text VARCHAR(100) NOT NULL,
+text VARCHAR(500) NOT NULL,
 owner VARCHAR(10) NOT NULL,
 videoId BIGINT NOT NULL,
 datePosted DATE NOT NULL,

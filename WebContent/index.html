@@ -12,11 +12,9 @@
       <script src="js/nav.js" type="text/javascript"></script>
       <script src="js/index.js" type="text/javascript"></script>
     </head>
-  
     <body>
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
-
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#toggleMenu" id="mytoggle">
                         <span class="icon-bar"></span>
@@ -25,9 +23,7 @@
                     </button>
                     <a class="navbar-brand" href="index.html">MyTube</a>
                 </div>
-
                 <div class="collapse navbar-collapse" id="toggleMenu">
-                
                     <form class="navbar-form navbar-left" role="search" action="#">
                         <div class="form-group-sm">
                             <div class="input-group" id="searchBarNav">
@@ -36,7 +32,6 @@
                             </div>
                         </div>
                     </form>
-                
                     <ul class="nav navbar-nav navbar-right" id="navbarNotLoggedIn">
                         <li><a  data-toggle="modal" href="#login-modal" ><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                         <li><a  data-toggle="modal" href="#register-modal"><span class="glyphicon glyphicon-user" ></span> Register</a></li>
@@ -47,7 +42,6 @@
                             </ul>
                         </li>
                     </ul>
-                  
                     <ul class="nav navbar-nav navbar-right" id="navbarLoggedIn">
                         <li><a href="#newVideoModal" data-toggle="modal" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
                         <li class="dropdown">
@@ -81,7 +75,6 @@
                                 </li>   
                             </ul>
                         </li>
-                              
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-cog"></span> Options<span class="caret"></span>
                             </a>
@@ -91,7 +84,6 @@
                             </ul>
                         </li>
                     </ul>
-                   
                 </div>
             </div>
         </nav>
@@ -107,8 +99,8 @@
                     <div class="modal-header">
                         <form role="form">
                             <div class="form-group">
-                                <input type="username" name="uname" id="usernameLogin" class="form-control" placeholder="Username" required/>
-                                <input type="password" name="passw" id="passwordLogin" class="form-control" placeholder="Password" required/>
+                                <input type="username" name="uname" id="usernameLogin" class="form-control" placeholder="Username" maxlength="15" required/>
+                                <input type="password" name="passw" id="passwordLogin" class="form-control" placeholder="Password" maxlength="15" required/>
                             </div>
                         </form>
                     </div>
@@ -134,14 +126,14 @@
                     <div class="modal-header">
                         <form action="RegisterServlet" method="post">
                             <div class="form-group">
-                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username*" required/>
-                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password*" required/>
-                                <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" required/>
-                                <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" required/>
-                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email*" required/>
+                                <input type="text" name="uname" id="usernameRegister" class="form-control" placeholder="Username*" maxlength="15" required/>
+                                <input type="password" name="passw" id="passwordRegister" class="form-control" placeholder="Password*" maxlength="15" required/>
+                                <input type="text" name="firstName" id="firstNameRegister" class="form-control" placeholder="First Name" maxlength="15"/>
+                                <input type="text" name="lastName" id="lastNameRegister" class="form-control" placeholder="Last Name" maxlength="15"/>
+                                <input type="text" name="email" id="emailRegister" class="form-control" placeholder="Email*" maxlength="30" required/>
                                 <label for="rlol" id="rlou">Link or update : </label>
 		                    	<input type="checkbox" id="rlol" onchange="lolChanged()"/>
-		                    	<input type="text" id="registerPic" class="form-control" placeholder="Profile picture url" required/>
+		                    	<input type="text" id="registerPic" class="form-control" placeholder="Profile picture url" maxlength="300" required/>
 		                    	<input type="file" name="pic" accept="image/*" id="registerUploadPic"/>
                             </div>
                         </form>
@@ -257,10 +249,12 @@
                     </div>
                     <!-- body -->
                     <div class="modal-header">
-                    	<input type="text" id="newVideoUrl" class="form-control" placeholder="Video url" required/>
-                    	<input type="text" id="newVideoName" class="form-control" placeholder="Title" required/>
-                    	<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="newDescription" rows="4" placeholder="Description"></textarea>
-                    	<input type="text" id="newPicUrl" class="form-control" placeholder="Picture url" required/>
+                    	<input type="text" id="newVideoUrl" class="form-control" placeholder="Video url*" maxlength="100" required/>
+                    	<input type="text" id="newVideoName" class="form-control" placeholder="Title*" maxlength="80" required/>
+                    	<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="newDescription" maxlength="500" rows="4" placeholder="Description"></textarea>
+                    	<label for="lod" id="lodl">Default video picture : </label>
+		                <input type="checkbox" id="lod" onchange="hideShowLink()"/>
+                    	<input type="text" id="newPicUrl" class="form-control" placeholder="Picture url*" maxlength="200" required/>
                     	<hr>
                     	<p class="newVideoTitle">Visibility</p>
                     	<select name="visibility" form="visibilityForm" class="newOption" id="selectVisib">
@@ -288,11 +282,42 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="invalidLinkModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="invalidLinkTitle" class="modal-title">Invalid link.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="invalidLinkMessage">You must insert a valid link.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="fillAllModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                  <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 id="fillAllModalTitle" class="modal-title">New video.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="fillAllModalMessage">You must fill all fields with *.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="mainDiv">
             <div id="recommendedDiv">
                 <h3>Most recent</h3>     
                 <div class="row">
-                    
                 </div>
             </div>
             <h4><a href="#">See more</a></h4>
@@ -300,7 +325,6 @@
             <div id="popularChannels">
                 <h3>Most Popular Channels</h3>     
                 <div class="rowOne">
-                    
                 </div>
             </div>
         </div>

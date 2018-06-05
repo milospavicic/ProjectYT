@@ -230,3 +230,8 @@
 #commentPic img{
 	border-radius: 50%;
 }
+
+.commentText p{
+	width:100%; 
+	overflow-wrap: break-word;
+}

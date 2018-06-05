@@ -151,7 +151,7 @@ public class VideoDAO {
 		}
 		return videos;
 	}
-	public static ArrayList<Video> getRecommended(boolean userType) {
+	public static ArrayList<Video> getRecommended(boolean userType,int videoId) {
 		Connection conn = ConnectionMenager.getConnection();
 		ArrayList<Video> videos = new ArrayList<Video>();
 
@@ -159,18 +159,20 @@ public class VideoDAO {
 		ResultSet rset = null;
 		try {
 			if(userType==false) {
-				String query = "SELECT * FROM video AS V INNER JOIN users AS U ON V.owner=U.userName WHERE visibility = ? AND V.deleted = ? AND V.blocked = ? AND U.deleted = ? AND U.blocked = ? ORDER BY RAND() LIMIT 6";
+				String query = "SELECT * FROM video AS V INNER JOIN users AS U ON V.owner=U.userName WHERE visibility = ? AND V.deleted = ? AND V.blocked = ? AND U.deleted = ? AND U.blocked = ? AND NOT V.id = ? ORDER BY RAND() LIMIT 6";
 				pstmt = conn.prepareStatement(query);
 				pstmt.setString(1, "PUBLIC");
 				pstmt.setBoolean(2, false);
 				pstmt.setBoolean(3, false);
 				pstmt.setBoolean(4, false);
 				pstmt.setBoolean(5, false);
+				pstmt.setInt(6, videoId);
 			}else {
-				String query = "SELECT * FROM video AS V INNER JOIN users AS U ON V.owner=U.userName WHERE V.deleted = ? AND U.deleted = ? ORDER BY RAND() LIMIT 6";
+				String query = "SELECT * FROM video AS V INNER JOIN users AS U ON V.owner=U.userName WHERE V.deleted = ? AND U.deleted = ? AND NOT V.id = ? ORDER BY RAND() LIMIT 6";
 				pstmt = conn.prepareStatement(query);
 				pstmt.setBoolean(1, false);
 				pstmt.setBoolean(2, false);
+				pstmt.setInt(3, videoId);
 			}
 			
 			rset = pstmt.executeQuery();
