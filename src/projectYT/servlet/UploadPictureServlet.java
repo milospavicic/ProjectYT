@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -19,7 +18,6 @@ import projectYT.dao.UserDAO;
 import projectYT.model.User;
 
 public class UploadPictureServlet extends HttpServlet {
-	private static final String SAVE_DIR = "WebContent\\images\\users";
 	private static final long serialVersionUID = 1L;
    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -30,7 +28,6 @@ public class UploadPictureServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		User channel = (User) session.getAttribute("channel");
 		String imagesPath = (String) getServletContext().getAttribute("imagesPath");
-		String path = request.getServletContext().getRealPath("");
 		ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
 		
 		String thumbnailUrl = "";

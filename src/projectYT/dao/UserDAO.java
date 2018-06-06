@@ -4,14 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import projectYT.model.User;
 import projectYT.model.User.UserType;
+import projectYT.tools.DateConverter;
 
 public class UserDAO {
 	public static User usernameTaken(String userName) {
@@ -34,7 +32,7 @@ public class UserDAO {
 				String channelDescription = rset.getString(index++);
 				UserType userType = UserType.valueOf(rset.getString(index++));
 				Date date= rset.getDate(index++);
-				String registrationDate = dateToString(date);
+				String registrationDate = DateConverter.dateToString(date);
 				boolean blocked = rset.getBoolean(index++);
 				boolean deleted = rset.getBoolean(index++);
 				String profileUrl = rset.getString(index++);
@@ -75,7 +73,7 @@ public class UserDAO {
 				String channelDescription = rset.getString(index++);
 				UserType userType = UserType.valueOf(rset.getString(index++));
 				Date date= rset.getDate(index++);
-				String registrationDate = dateToString(date);
+				String registrationDate = DateConverter.dateToString(date);
 				boolean blocked = rset.getBoolean(index++);
 				boolean deleted = rset.getBoolean(index++);
 				String profileUrl = rset.getString(index++);
@@ -121,7 +119,7 @@ public class UserDAO {
 				String channelDescription = rset.getString(index++);
 				UserType userType = UserType.valueOf(rset.getString(index++));
 				Date date= rset.getDate(index++);
-				String registrationDate = dateToString(date);
+				String registrationDate = DateConverter.dateToString(date);
 				boolean blocked = rset.getBoolean(index++);
 				boolean deleted = rset.getBoolean(index++);
 				String profileUrl = rset.getString(index++);
@@ -262,7 +260,7 @@ public class UserDAO {
 				String channelDescription = rset.getString(index++);
 				UserType userType = UserType.valueOf(rset.getString(index++));
 				Date date= rset.getDate(index++);
-				String registrationDate = dateToString(date);
+				String registrationDate = DateConverter.dateToString(date);
 				boolean blocked = rset.getBoolean(index++);
 				boolean deleted = rset.getBoolean(index++);
 				String profileUrl = rset.getString(index++);
@@ -312,7 +310,7 @@ public class UserDAO {
 			pstmt.setString(index++, user.getEmail());
 			pstmt.setString(index++, user.getChannelDescription());
 			pstmt.setString(index++, user.getUserType().toString());
-			Date tempDate= stringToDateForWrite(user.getRegistrationDate());
+			Date tempDate= DateConverter.stringToDateForWrite(user.getRegistrationDate());
 			java.sql.Date date=new java.sql.Date(tempDate.getTime());
 			pstmt.setDate(index++, date);
 			pstmt.setBoolean(index++, user.getBlocked());
@@ -542,44 +540,175 @@ public class UserDAO {
 		}
 		return false;
 	}
-	public static String dateToString(Date date) {
-		SimpleDateFormat formatvr = new SimpleDateFormat("dd.MM.yyyy");
-		String datum;
-		datum = formatvr.format(date);
-		return datum;
-	}
-	public static Date stringToDate(String datum) {
-
+	public static boolean checkIfDeletableHasVideos(String username) {
+		Connection conn = ConnectionMenager.getConnection();
+		ResultSet rset = null;
+		PreparedStatement pstmt = null;
 		try {
-			DateFormat formatvr = new SimpleDateFormat("dd.MM.yyyy");
+			String query = "SELECT COUNT(*) FROM video WHERE owner = ?;";
 
-			return formatvr.parse(datum);
-
-		} catch (ParseException e) {
-			e.printStackTrace();
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, username);
+			rset = pstmt.executeQuery();
+			if(rset.next()) {
+				int count = rset.getInt(1);
+				if(count==0)
+					return true;
+				else
+					return false;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
 		}
 
-		return null;
-
+		return false;
+		
 	}
-	public static String dateToStringForWrite(Date date) {
-		SimpleDateFormat formatvr = new SimpleDateFormat("yyyy-MM-dd");
-		String datum;
-		datum = formatvr.format(date);
-		return datum;
-	}
-	public static Date stringToDateForWrite(String datum) {
-
+	public static boolean checkIfDeletableLikedSomething(String username) {
+		Connection conn = ConnectionMenager.getConnection();
+		ResultSet rset = null;
+		PreparedStatement pstmt = null;
 		try {
-			DateFormat formatvr = new SimpleDateFormat("yyyy-MM-dd");
+			String query = "SELECT COUNT(*) FROM likedislike WHERE owner = ?;";
 
-			return formatvr.parse(datum);
-
-		} catch (ParseException e) {
-			e.printStackTrace();
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, username);
+			rset = pstmt.executeQuery();
+			if(rset.next()) {
+				int count = rset.getInt(1);
+				if(count==0)
+					return true;
+				else
+					return false;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
 		}
 
-		return null;
-
+		return false;
+		
 	}
+	public static boolean checkIfDeletableCommentedVideos(String username) {
+		Connection conn = ConnectionMenager.getConnection();
+		ResultSet rset = null;
+		PreparedStatement pstmt = null;
+		try {
+			String query = "SELECT COUNT(*) FROM comment WHERE owner = ?;";
+
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, username);
+			rset = pstmt.executeQuery();
+			if(rset.next()) {
+				int count = rset.getInt(1);
+				if(count==0)
+					return true;
+				else
+					return false;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+
+		return false;
+		
+	}
+	public static boolean checkIfDeletableFollowing(String username) {
+		Connection conn = ConnectionMenager.getConnection();
+		ResultSet rset = null;
+		PreparedStatement pstmt = null;
+		try {
+			String query = "SELECT COUNT(*) FROM subscribe WHERE mainUser = ? OR subscriber = ?;";
+
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, username);
+			pstmt.setString(2, username);
+			rset = pstmt.executeQuery();
+			if(rset.next()) {
+				int count = rset.getInt(1);
+				if(count==0)
+					return true;
+				else
+					return false;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+
+		return false;
+		
+	}
+	public static boolean deleteUserAdmin(String username) {
+		Connection conn = ConnectionMenager.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			String query = "DELETE FROM users WHERE userName=?;";
+
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, username);
+		
+			return pstmt.executeUpdate() == 1;
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+
+		return false;
+		
+		
+	}
+
 }

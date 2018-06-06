@@ -160,6 +160,7 @@ function saveNewVideo(){
 	
 	$.post('VideoServlet',{"status":"newVideo","videoUrl":newUrl,"title":title,"desc":desc,"picurl":picurl,"visib":visib,"comm":comm,"rating":rating,"lod":lod},function(data){
 		if(data.endStatus =="addSuccess"){
+			console.log(data.videoId);
 			document.location.href = "videoPage.html?id="+data.videoId;
 		}else{
 			$('#failModal').modal();

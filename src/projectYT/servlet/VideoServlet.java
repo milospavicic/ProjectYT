@@ -13,16 +13,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.media.jfxmedia.control.VideoFormat;
 
 import projectYT.dao.LikeDAO;
-import projectYT.dao.UserDAO;
 import projectYT.dao.VideoDAO;
 import projectYT.model.Like;
 import projectYT.model.User;
 import projectYT.model.User.UserType;
 import projectYT.model.Video;
 import projectYT.model.Video.Visibility;
+import projectYT.tools.DateConverter;
 
 public class VideoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -47,7 +46,6 @@ public class VideoServlet extends HttpServlet {
 			likedVideo = LikeDAO.videoLikedByUser(videoId, loggedInUser.getUserName());
 			if (loggedInUser.getUserType() == UserType.ADMIN) {
 				recommended = VideoDAO.getRecommended(true,videoId);
-				System.out.println("admin");
 			} else {
 				recommended = VideoDAO.getRecommended(false,videoId);
 			}
@@ -126,8 +124,8 @@ public class VideoServlet extends HttpServlet {
 					Video videoForBlock = VideoDAO.getVideo(videoId);
 					videoForBlock.setBlocked(true);
 					VideoDAO.updateVideo(videoForBlock);
+					endStatus = "blockSuccess";
 				}
-				endStatus = "blockSuccess";
 			}catch (Exception e) {
 				endStatus = "blockFailed";
 			}
@@ -148,10 +146,21 @@ public class VideoServlet extends HttpServlet {
 		case "delete":
 			try {
 				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
+
 					videoId = Integer.parseInt(request.getParameter("videoId"));
-					Video videoForDelete = VideoDAO.getVideo(videoId);
-					videoForDelete.setDeleted(true);
-					VideoDAO.updateVideo(videoForDelete);
+					if(loggedInUser.getUserType() == UserType.ADMIN) {
+						if(VideoDAO.checkIfDeletableLikeCondition(videoId) && VideoDAO.checkIfDeletableCommentCondition(videoId)) {
+							VideoDAO.deleteVideoAdmin(videoId);
+						}else {
+							Video videoForDelete = VideoDAO.getVideo(videoId);
+							videoForDelete.setDeleted(true);
+							VideoDAO.updateVideo(videoForDelete);
+						}
+					}else {
+						Video videoForDelete = VideoDAO.getVideo(videoId);
+						videoForDelete.setDeleted(true);
+						VideoDAO.updateVideo(videoForDelete);
+					}
 					endStatus = "deleteSuccess";
 				}
 			}catch (Exception e) {
@@ -172,13 +181,12 @@ public class VideoServlet extends HttpServlet {
 					int newVisib = Integer.parseInt(request.getParameter("visib"));
 					int newComm = Integer.parseInt(request.getParameter("comm"));
 					int newRating = Integer.parseInt(request.getParameter("rating"));
-					newId = VideoDAO.getVideoId();
 					Date newDate = new Date();
-					String newDateForBase = UserDAO.dateToStringForWrite(newDate);
+					String newDateForBase = DateConverter.dateToStringForWrite(newDate);
 					if(newVideoUrl.equals("")||newTitle.equals("")) {
 						return;
 					}
-					Video newVideo = new Video(newId, newVideoUrl, newPicUrl, newTitle, newDesc, null, false, false, false,
+					Video newVideo = new Video(0, newVideoUrl, newPicUrl, newTitle, newDesc, null, false, false, false,
 							0, 0, 0, newDateForBase, loggedInUser, false);
 					if (newVisib == 1)
 						newVideo.setVisibility(Visibility.PUBLIC);
@@ -196,8 +204,8 @@ public class VideoServlet extends HttpServlet {
 						newVideo.setRatingEnabled(true);
 					else
 						newVideo.setRatingEnabled(false);
-					VideoDAO.newVideo(newVideo);
-
+					newId = VideoDAO.newVideo(newVideo);
+					System.out.println("newId: " + newId);
 					endStatus = "addSuccess";
 				}
 			}catch (Exception e) {

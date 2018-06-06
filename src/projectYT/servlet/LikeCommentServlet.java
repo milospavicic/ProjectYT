@@ -15,10 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import projectYT.dao.CommentDAO;
 import projectYT.dao.LikeDAO;
-import projectYT.dao.UserDAO;
 import projectYT.model.Comment;
 import projectYT.model.Like;
 import projectYT.model.User;
+import projectYT.tools.DateConverter;
 
 public class LikeCommentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class LikeCommentServlet extends HttpServlet {
 			if(likeExists==null) {
 				Date likeDate = new Date();
 				int likeId =LikeDAO.getLikeId();
-				Like newLike = new Like(likeId, likeOrDislike, UserDAO.dateToStringForWrite(likeDate), null, comment, loggedInUser,false);
+				Like newLike = new Like(likeId, likeOrDislike, DateConverter.dateToStringForWrite(likeDate), null, comment, loggedInUser,false);
 				LikeDAO.addLikeDislike(newLike);
 				System.out.println("fail?");
 				System.out.println(newLike.getId()+"  "+comment.getId());

@@ -1,7 +1,5 @@
 package projectYT.model;
 
-import java.util.Date;
-
 public class Comment {
 	
 	public int id;

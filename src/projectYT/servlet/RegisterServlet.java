@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import projectYT.dao.UserDAO;
 import projectYT.model.User;
 import projectYT.model.User.UserType;
+import projectYT.tools.DateConverter;
 
 /**
  * Servlet implementation class RegisterServlet
@@ -46,7 +47,7 @@ public class RegisterServlet extends HttpServlet {
 		}
 		else {
 			Date newDate = new Date();
-			String myNewDate = UserDAO.dateToStringForWrite(newDate);
+			String myNewDate = DateConverter.dateToStringForWrite(newDate);
 			String basicProfileUrl = "http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png";
 			newUser = new User();
 			newUser.setUserName(userName);

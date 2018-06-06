@@ -10,6 +10,7 @@ import java.util.Date;
 import projectYT.model.Comment;
 import projectYT.model.User;
 import projectYT.model.Video;
+import projectYT.tools.DateConverter;
 
 public class CommentDAO {
 	public static int getCommentId() {
@@ -68,7 +69,7 @@ public class CommentDAO {
 				boolean deleted=rset.getBoolean(index++);
 				User user = UserDAO.getUserByName(owner);
 				Video video=VideoDAO.getVideo(videoId);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				return new Comment(id, text, datePosted, user, video, likeNumber, dislikeNumber, deleted);
 			}
 
@@ -114,7 +115,7 @@ public class CommentDAO {
 				boolean deleted=rset.getBoolean(index++);
 				User user = UserDAO.getUserByName(owner);
 				Video video=VideoDAO.getVideo(videoId);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				
 				if(user == null || video == null) {
 					continue;
@@ -167,7 +168,7 @@ public class CommentDAO {
 				boolean deleted=rset.getBoolean(index++);
 				User user = UserDAO.getUserByName(owner);
 				Video video=VideoDAO.getVideo(videoId);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				if(user == null || video == null) {
 					continue;
 				}
@@ -207,7 +208,7 @@ public class CommentDAO {
 			pstmt.setString(index++, comment.getText());
 			pstmt.setString(index++, comment.getUser().getUserName());
 			pstmt.setInt(index++, comment.getVideo().getId());
-			Date myDate=UserDAO.stringToDateForWrite(comment.getDatePosted());
+			Date myDate=DateConverter.stringToDateForWrite(comment.getDatePosted());
 			java.sql.Date date=new java.sql.Date(myDate.getTime());
 			pstmt.setDate(index++, date);
 			pstmt.setInt(index++, comment.getLikeNumber());
@@ -239,9 +240,9 @@ public class CommentDAO {
 			pstmt.setInt(1, comment.getLikeNumber());
 			pstmt.setInt(2, comment.getDislikeNumber());
 			pstmt.setBoolean(3, comment.isDeleted());
-			Date d1 =UserDAO.stringToDate(comment.getDatePosted());
-			String dd=UserDAO.dateToStringForWrite(d1);
-			Date d=UserDAO.stringToDateForWrite(dd);
+			Date d1 =DateConverter.stringToDate(comment.getDatePosted());
+			String dd=DateConverter.dateToStringForWrite(d1);
+			Date d=DateConverter.stringToDateForWrite(dd);
 			java.sql.Date date=new java.sql.Date(d.getTime());
 			pstmt.setDate(4, date);
 			pstmt.setString(5, comment.getText());
@@ -260,6 +261,68 @@ public class CommentDAO {
 		}
 
 		return false;
+		
+	}
+	public static boolean checkIfDeletable(int commentId) {
+		Connection conn = ConnectionMenager.getConnection();
+		ResultSet rset = null;
+		PreparedStatement pstmt = null;
+		try {
+			String query = "SELECT COUNT(*) FROM likedislikecomment WHERE commentId = ?;";
+
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, commentId);
+			rset = pstmt.executeQuery();
+			if(rset.next()) {
+				int count = rset.getInt(1);
+				if(count==0)
+					return true;
+				else
+					return false;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+
+		return false;
+		
+	}
+
+	public static boolean deleteCommentAdmin(int commentId) {
+		Connection conn = ConnectionMenager.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			String query = "DELETE FROM comment WHERE id=?;";
+
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, commentId);
+		
+			return pstmt.executeUpdate() == 1;
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+
+		return false;
+		
 		
 	}
 

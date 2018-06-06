@@ -198,8 +198,8 @@ public class ChannelServlet extends HttpServlet {
 						}
 						UserDAO.update(channel);
 					}
+					endStatus = "editSuccess";
 				}
-				endStatus = "editSuccess";
 			} catch (Exception e) {
 				endStatus = "editFailed";
 			}
@@ -207,10 +207,21 @@ public class ChannelServlet extends HttpServlet {
 		case "delete":
 			try {
 				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
-					channel.setDeleted(true);
-					UserDAO.update(channel);
+					if(loggedInUser.getUserType() == UserType.ADMIN) {
+						if(UserDAO.checkIfDeletableCommentedVideos(channelName) && UserDAO.checkIfDeletableHasVideos(channelName) &&
+								UserDAO.checkIfDeletableLikedSomething(channelName) && UserDAO.checkIfDeletableFollowing(channelName)) {
+							UserDAO.deleteUserAdmin(channelName);
+							
+						}else {
+							channel.setDeleted(true);
+							UserDAO.update(channel);
+						}
+					}else {
+						channel.setDeleted(true);
+						UserDAO.update(channel);
+					}
+					endStatus = "deleteSuccess";
 				}
-				endStatus = "deleteSuccess";
 			} catch (Exception e) {
 				endStatus = "deleteFailed";
 			}
@@ -220,8 +231,8 @@ public class ChannelServlet extends HttpServlet {
 				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
 					channel.setBlocked(true);
 					UserDAO.update(channel);
+					endStatus = "blockSuccess";
 				}
-				endStatus = "blockSuccess";
 			} catch (Exception e) {
 				endStatus = "blockFailed";
 			}
@@ -231,8 +242,8 @@ public class ChannelServlet extends HttpServlet {
 				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
 					channel.setBlocked(false);
 					UserDAO.update(channel);
+					endStatus = "unblockSuccess";
 				}
-				endStatus = "unblockSuccess";
 			} catch (Exception e) {
 				endStatus = "unblockFailed";
 			}

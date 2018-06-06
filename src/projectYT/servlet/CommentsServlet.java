@@ -15,12 +15,13 @@ import javax.servlet.http.HttpSession;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import projectYT.dao.CommentDAO;
 import projectYT.dao.LikeDAO;
-import projectYT.dao.UserDAO;
 import projectYT.dao.VideoDAO;
 import projectYT.model.Comment;
 import projectYT.model.Like;
 import projectYT.model.User;
+import projectYT.model.User.UserType;
 import projectYT.model.Video;
+import projectYT.tools.DateConverter;
 
 public class CommentsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -69,7 +70,7 @@ public class CommentsServlet extends HttpServlet {
 					Video video = VideoDAO.getVideo(videoId);
 					int newId = CommentDAO.getCommentId();
 					Date newDate = new Date();
-					String datePosted = UserDAO.dateToStringForWrite(newDate);
+					String datePosted = DateConverter.dateToStringForWrite(newDate);
 					Comment newCommet = new Comment(newId, commentText, datePosted, loggedInUser, video, 0, 0, false);
 					CommentDAO.addComment(newCommet);
 					endStatus="newSuccess";
@@ -96,9 +97,19 @@ public class CommentsServlet extends HttpServlet {
 			try {
 				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
 					int commentId = Integer.parseInt(request.getParameter("commentId"));
-					Comment commentForDelete = CommentDAO.getCommentForId(commentId);
-					commentForDelete.setDeleted(true);
-					CommentDAO.updateComment(commentForDelete);
+					if(loggedInUser.getUserType() == UserType.ADMIN) {
+						if(CommentDAO.checkIfDeletable(commentId)) {
+							CommentDAO.deleteCommentAdmin(commentId);
+						}else {
+							Comment commentForDelete = CommentDAO.getCommentForId(commentId);
+							commentForDelete.setDeleted(true);
+							CommentDAO.updateComment(commentForDelete);
+						}
+					}else {
+						Comment commentForDelete = CommentDAO.getCommentForId(commentId);
+						commentForDelete.setDeleted(true);
+						CommentDAO.updateComment(commentForDelete);
+					}
 					endStatus="deleteSuccess";
 				}
 			}catch (Exception e) {

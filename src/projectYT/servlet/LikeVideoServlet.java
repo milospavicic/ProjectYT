@@ -14,11 +14,11 @@ import javax.servlet.http.HttpSession;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import projectYT.dao.LikeDAO;
-import projectYT.dao.UserDAO;
 import projectYT.dao.VideoDAO;
 import projectYT.model.Like;
 import projectYT.model.User;
 import projectYT.model.Video;
+import projectYT.tools.DateConverter;
 
 public class LikeVideoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class LikeVideoServlet extends HttpServlet {
 				System.out.println("newLike: "+likeOrDislike);
 				Date likeDate = new Date();
 				int likeId =LikeDAO.getLikeId();
-				Like newLike = new Like(likeId, likeOrDislike, UserDAO.dateToStringForWrite(likeDate), video, null, loggedInUser,false);
+				Like newLike = new Like(likeId, likeOrDislike, DateConverter.dateToStringForWrite(likeDate), video, null, loggedInUser,false);
 				LikeDAO.addLikeDislike(newLike);
 				System.out.println("???");
 				LikeDAO.addVideoLikeDislike(newLike.getId(),video.getId());

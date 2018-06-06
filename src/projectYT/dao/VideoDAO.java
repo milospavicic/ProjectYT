@@ -6,9 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+
+import com.mysql.jdbc.Statement;
+
 import projectYT.model.User;
 import projectYT.model.Video;
 import projectYT.model.Video.Visibility;
+import projectYT.tools.DateConverter;
 
 public class VideoDAO {
 
@@ -74,7 +78,7 @@ public class VideoDAO {
 				int numberOfDislikes = rset.getInt(index++);
 				int views = rset.getInt(index++);
 				Date d = rset.getDate(index++);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				String user = rset.getString(index++);
 				User owner = UserDAO.getUserByName(user);
 				boolean deleted = rset.getBoolean(index++);
@@ -126,7 +130,7 @@ public class VideoDAO {
 				int numberOfDislikes = rset.getInt(index++);
 				int views = rset.getInt(index++);
 				Date d = rset.getDate(index++);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				String user = rset.getString(index++);
 				User owner = UserDAO.getUserByName(user);
 				boolean deleted = rset.getBoolean(index++);
@@ -191,7 +195,7 @@ public class VideoDAO {
 				int numberOfDislikes = rset.getInt(index++);
 				int views = rset.getInt(index++);
 				Date d = rset.getDate(index++);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				String user = rset.getString(index++);
 				User owner = UserDAO.getUserByName(user);
 				boolean deleted = rset.getBoolean(index++);
@@ -241,7 +245,7 @@ public class VideoDAO {
 				int numberOfDislikes = rset.getInt(index++);
 				int views = rset.getInt(index++);
 				Date d = rset.getDate(index++);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				String user = rset.getString(index++);
 				User owner = UserDAO.getUserByName(user);
 				boolean deleted = rset.getBoolean(index++);
@@ -305,7 +309,7 @@ public class VideoDAO {
 				int numberOfDislikes = rset.getInt(index++);
 				int views = rset.getInt(index++);
 				Date d = rset.getDate(index++);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				String user = rset.getString(index++);
 				User owner = UserDAO.getUserByName(user);
 				boolean deleted = rset.getBoolean(index++);
@@ -370,7 +374,7 @@ public class VideoDAO {
 				int numberOfDislikes = rset.getInt(index++);
 				int views = rset.getInt(index++);
 				Date d = rset.getDate(index++);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				String user = rset.getString(index++);
 				User owner = UserDAO.getUserByName(user);
 				boolean deleted = rset.getBoolean(index++);
@@ -551,7 +555,7 @@ public class VideoDAO {
 				int numberOfDislikes = rset.getInt(index++);
 				int views = rset.getInt(index++);
 				Date d = rset.getDate(index++);
-				String datePosted=UserDAO.dateToString(d);
+				String datePosted=DateConverter.dateToString(d);
 				String user = rset.getString(index++);
 				User owner = UserDAO.getUserByName(user);
 				boolean deleted = rset.getBoolean(index++);
@@ -645,13 +649,14 @@ public class VideoDAO {
 		}
 		return false;
 	}
-	public static boolean newVideo(Video video){
+	public static int newVideo(Video video){
 		Connection conn = ConnectionMenager.getConnection();
 		PreparedStatement pstmt = null;
+		int newId = 0;
 		try {
 			String query = "INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes,numberOfDislikes,views,datePosted,owner,deleted)"
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			pstmt = conn.prepareStatement(query);
+			pstmt = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
 			int index = 1;
 			pstmt.setString(index++, video.getVideoUrl());
 			pstmt.setString(index++, video.getPictureUrl());
@@ -664,13 +669,28 @@ public class VideoDAO {
 			pstmt.setInt(index++, video.getNumberOfLikes());
 			pstmt.setInt(index++, video.getNumberOfDislikes());
 			pstmt.setInt(index++, video.getViews());
-			Date myDate=UserDAO.stringToDateForWrite(video.getDatePosted());
+			Date myDate=DateConverter.stringToDateForWrite(video.getDatePosted());
 			java.sql.Date date=new java.sql.Date(myDate.getTime());
 			pstmt.setDate(index++,date);
 			pstmt.setString(index++, video.getOwner().getUserName());
 			pstmt.setBoolean(index++, video.isDeleted());
 	
-			return pstmt.executeUpdate() == 1;
+			//return pstmt.executeUpdate() == 1;
+			int affectedRows = pstmt.executeUpdate();
+
+	        if (affectedRows == 0) {
+	            throw new SQLException("Creating user failed, no rows affected.");
+	        }
+
+	        try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+	            if (generatedKeys.next()) {
+	            	newId = generatedKeys.getInt(1);
+	                return newId;
+	            }
+	            else {
+	                throw new SQLException("Creating user failed, no ID obtained.");
+	            }
+	        }
 		} catch (Exception ex) {
 			System.out.println("Greska u SQL upitu!");
 			ex.printStackTrace();
@@ -681,6 +701,97 @@ public class VideoDAO {
 				ex1.printStackTrace();
 			}
 		}
+		return newId;
+	}
+	public static boolean checkIfDeletableLikeCondition(int videoId) {
+		Connection conn = ConnectionMenager.getConnection();
+		ResultSet rset = null;
+		PreparedStatement pstmt = null;
+		try {
+			String query = "SELECT COUNT(*) FROM likedislikevideo WHERE videoId = ?;";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, videoId);
+			rset = pstmt.executeQuery();
+			if(rset.next()) {
+				int count = rset.getInt(1);
+				if(count==0)
+					return true;
+				else
+					return false;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
 		return false;
+	}
+	public static boolean checkIfDeletableCommentCondition(int videoId) {
+		Connection conn = ConnectionMenager.getConnection();
+		ResultSet rset = null;
+		PreparedStatement pstmt = null;
+		try {
+			String query = "SELECT COUNT(*) FROM comment WHERE videoId = ?;";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, videoId);
+			rset = pstmt.executeQuery();
+			if(rset.next()) {
+				int count = rset.getInt(1);
+				if(count==0)
+					return true;
+				else
+					return false;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+			try {
+				rset.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+		return false;
+	}
+	public static boolean deleteVideoAdmin(int videoId) {
+		Connection conn = ConnectionMenager.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			String query = "DELETE FROM video WHERE id=?;";
+
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, videoId);
+		
+			return pstmt.executeUpdate() == 1;
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+			} catch (SQLException ex1) {
+				ex1.printStackTrace();
+			}
+		}
+
+		return false;
+		
+		
 	}
 }

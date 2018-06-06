@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import projectYT.model.Like;
+import projectYT.tools.DateConverter;
 
 public class LikeDAO {
 
@@ -62,7 +63,7 @@ public class LikeDAO {
 				Date d=rset.getDate(index++);
 				String owner=rset.getString(index++);
 				boolean deleted = rset.getBoolean(index++);
-				String date=UserDAO.dateToString(d);
+				String date=DateConverter.dateToString(d);
 				
 				Like likedVideo = new Like(likeId, isLike, date, VideoDAO.getVideo(videoId), null, UserDAO.getUserByName(owner),deleted);
 				return likedVideo;
@@ -93,7 +94,7 @@ public class LikeDAO {
 			String query = "INSERT INTO likeDislike(liked,likeDate,owner,deleted) VALUES(?, ?, ?,?)";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, likeDislike.isLikeOrDislike());
-			Date myDate=UserDAO.stringToDateForWrite(likeDislike.getLikeDate());
+			Date myDate=DateConverter.stringToDateForWrite(likeDislike.getLikeDate());
 			java.sql.Date date=new java.sql.Date(myDate.getTime());
 			pstmt.setDate(2, date);
 			pstmt.setString(3, likeDislike.getOwner().getUserName());
@@ -259,7 +260,7 @@ public class LikeDAO {
 				Date d=rset.getDate(index++);
 				String owner=rset.getString(index++);
 				boolean deleted = rset.getBoolean(index++);
-				String date=UserDAO.dateToString(d);
+				String date=DateConverter.dateToString(d);
 				Like likedComment = new Like(likeId, isLike, date, null, CommentDAO.getCommentForId(commentsId), UserDAO.getUserByName(owner),deleted);
 				return likedComment;
 			}
@@ -326,7 +327,7 @@ public class LikeDAO {
 				String owner=rset.getString(index++);
 				boolean deleted = rset.getBoolean(index++);
 				int commentsId=rset.getInt(index++);
-				String date=UserDAO.dateToString(d);
+				String date=DateConverter.dateToString(d);
 				Like likedComment = new Like(likeId, isLike, date, null, CommentDAO.getCommentForId(commentsId), UserDAO.getUserByName(owner),deleted);
 				likedComments.add(likedComment);
 			}
