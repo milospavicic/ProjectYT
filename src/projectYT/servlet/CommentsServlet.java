@@ -10,9 +10,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import projectYT.dao.CommentDAO;
 import projectYT.dao.LikeDAO;
 import projectYT.dao.VideoDAO;
@@ -22,6 +22,7 @@ import projectYT.model.User;
 import projectYT.model.User.UserType;
 import projectYT.model.Video;
 import projectYT.tools.DateConverter;
+import projectYT.tools.UserLogCheck;
 
 public class CommentsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -32,8 +33,7 @@ public class CommentsServlet extends HttpServlet {
 		int videoId = Integer.parseInt(request.getParameter("videoId"));
 		String columnName = request.getParameter("columnName");
 		String ascDes = request.getParameter("ascDes");
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 
 		ArrayList<Comment> comments = CommentDAO.orderComments(videoId, columnName, ascDes);
 		ArrayList<Like> likes = new ArrayList<Like>();
@@ -53,11 +53,10 @@ public class CommentsServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 
 		String status = request.getParameter("status");
-		String endStatus = "";
+		String endStatus = "failed";
 		switch (status) {
 		case "new":
 			try {

@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,13 +21,13 @@ import projectYT.model.User.UserType;
 import projectYT.model.Video;
 import projectYT.model.Video.Visibility;
 import projectYT.tools.DateConverter;
+import projectYT.tools.UserLogCheck;
 
 public class VideoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 
 		int videoId = Integer.parseInt(request.getParameter("videoId"));
 		Video video = VideoDAO.getVideo(videoId);
@@ -69,8 +68,7 @@ public class VideoServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 		
 		String status = request.getParameter("status");
 		String endStatus = "";

@@ -251,17 +251,14 @@ public class LikeDAO {
 			pstmt.setBoolean(2, false);
 			pstmt.setString(3, loggedInUser);
 			pstmt.setInt(4, commentId);
-			rset = pstmt.executeQuery();
+			rset = pstmt.executeQuery();	
 			if (rset.next()) {
-				int index = 2;
-				int commentsId=rset.getInt(index++);
-				int likeId=rset.getInt(index++);
-				boolean isLike=rset.getBoolean(index++);
-				Date d=rset.getDate(index++);
-				String owner=rset.getString(index++);
-				boolean deleted = rset.getBoolean(index++);
+				int likeId=rset.getInt(1);
+				int commentsId=rset.getInt(2);
+				boolean isLike=rset.getBoolean(5);
+				Date d=rset.getDate(6);
 				String date=DateConverter.dateToString(d);
-				Like likedComment = new Like(likeId, isLike, date, null, CommentDAO.getCommentForId(commentsId), UserDAO.getUserByName(owner),deleted);
+				Like likedComment = new Like(likeId, isLike, date, null, CommentDAO.getCommentForId(commentsId), UserDAO.getUserByName(loggedInUser),false);
 				return likedComment;
 			}
 

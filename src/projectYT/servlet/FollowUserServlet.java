@@ -9,20 +9,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import projectYT.dao.UserDAO;
 import projectYT.model.User;
+import projectYT.tools.UserLogCheck;
 
 public class FollowUserServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser =  UserLogCheck.findCurrentUser(request);
 
 		ArrayList<String> list = new ArrayList<String>();
 		if (loggedInUser != null) {
@@ -40,25 +39,28 @@ public class FollowUserServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		User subscriber = (User) session.getAttribute("loggedInUser");
+		User subscriber = UserLogCheck.findCurrentUser(request);
 
 		String channel = request.getParameter("userName");
 		String status = request.getParameter("status");
-		System.out.println("follow/unfollow " + channel + "	" + subscriber.getUserName() + " " + status);
-		String endStatus = "";
-		try {
-			endStatus = "Success";
-			if (subscriber != null && subscriber.getBlocked() != true) {
-				if (status.equals("follow")) {
-					UserDAO.addSubs(channel, subscriber.getUserName());
-				} else {
-					UserDAO.deleteSubs(channel, subscriber.getUserName());
+		String endStatus = "failed";
+		if(subscriber!=null) {
+			System.out.println("follow/unfollow " + channel + "	" + subscriber.getUserName() + " " + status);
+			
+			try {
+				endStatus = "Success";
+				if (subscriber != null && subscriber.getBlocked() != true) {
+					if (status.equals("follow")) {
+						UserDAO.addSubs(channel, subscriber.getUserName());
+					} else {
+						UserDAO.deleteSubs(channel, subscriber.getUserName());
+					}
 				}
+			}catch (Exception e) {
+				endStatus = "failed";
 			}
-		}catch (Exception e) {
-			endStatus = "failed";
 		}
+
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("endStatus", endStatus);

@@ -160,6 +160,7 @@ $(document).ready(function(e) {
      
     
     $('#likeButton').click(function() {
+    	console.log("likeButtonClick");
 		if(loggedInUser=="false"){
     		$("#login-modal").modal('toggle');
     		return;
@@ -178,7 +179,11 @@ $(document).ready(function(e) {
     			setVideoButtonsDefault();
     		}else if(data.status=="like"){
     			setVideoLikeActive();
+    		}else if(data.status=="failed"){
+    			console.log("failedLike");
+    			$('#failModal').modal();
     		}else{
+    			console.log("failedLikeWTF");
     			setVideoDislikeActive();
     		}
     	});
@@ -202,7 +207,11 @@ $(document).ready(function(e) {
     			setVideoButtonsDefault();
     		}else if(data.status=="like"){
     			setVideoLikeActive();
+    		}else if(data.status=="failed"){
+    			console.log("failedLike1");
+    			$('#failModal').modal();
     		}else{
+    			console.log("failedLikeWTF1");
     			setVideoDislikeActive();
     		}
     	});
@@ -380,13 +389,17 @@ function commLike(commId){
 		return;
 	}
 	$.get('LikeCommentServlet',{"commentId":commId,"status":"liked"},function(data){
-		setCommentRating(data.comment);
-		if(data.status=="neutral"){
+		if(data.status=="failed"){
+			$('#failModal').modal();
+		}else if(data.status=="neutral"){
 			setCommentButtonsDefault(data.comment.id);
+			setCommentRating();
 		}else if(data.status=="like"){
 			setCommentLikeActive(data.comment.id);
+			setCommentRating();
 		}else{
 			setCommentDislikeActive(data.comment.id);
+			setCommentRating();
 		}
 	});
 }
@@ -404,13 +417,17 @@ function commDislike(commId){
 		return;
 	}
 	$.get('LikeCommentServlet',{"commentId":commId,"status":"disliked"},function(data){
-		setCommentRating(data.comment);
-		if(data.status=="neutral"){
+		if(data.status=="failed"){
+			$('#failModal').modal();
+		}else if(data.status=="neutral"){
 			setCommentButtonsDefault(data.comment.id);
+			setCommentRating(data.comment);
 		}else if(data.status=="like"){
 			setCommentLikeActive(data.comment.id);
+			setCommentRating(data.comment);
 		}else{
 			setCommentDislikeActive(data.comment.id);
+			setCommentRating(data.comment);
 		}
 	});
 	
@@ -487,6 +504,7 @@ function setVideoLikeActive(){
     $('#dislikeButton').addClass("btn btn-default");
 }
 function setVideoDislikeActive(){
+	console.log("dislikeActive()");
     $('#likeButton').removeClass();
     $('#dislikeButton').removeClass();
     
@@ -521,8 +539,11 @@ function setCommentDislikeActive(commId){
 	$('#dislike'+commId+'').addClass("btn btn-danger");
 }
 function setCommentRating(comment){
-	var rating = comment.likeNumber-comment.dislikeNumber;
-	$('#rating'+comment.id+'').html(rating)
+	if(comment!=null){
+		var rating = comment.likeNumber-comment.dislikeNumber;
+		$('#rating'+comment.id+'').html(rating);
+	}
+	
 }
 function deleteComment(id){
 	if(blocked == true){

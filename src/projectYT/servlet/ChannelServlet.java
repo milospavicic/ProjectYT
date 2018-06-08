@@ -17,6 +17,7 @@ import projectYT.dao.UserDAO;
 import projectYT.dao.VideoDAO;
 import projectYT.model.User;
 import projectYT.model.User.UserType;
+import projectYT.tools.UserLogCheck;
 import projectYT.model.Video;
 
 public class ChannelServlet extends HttpServlet {
@@ -27,8 +28,7 @@ public class ChannelServlet extends HttpServlet {
 		String channelName = request.getParameter("channelName");
 		User channel = UserDAO.getUserByName(channelName);
 
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 
 		boolean followThisChannel = false;
 		if (loggedInUser != null) {
@@ -118,7 +118,7 @@ public class ChannelServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 		String channelName = request.getParameter("channelName");
 		User channel = UserDAO.getUserByName(channelName);
 		System.out.println(channel);
@@ -219,6 +219,10 @@ public class ChannelServlet extends HttpServlet {
 					}else {
 						channel.setDeleted(true);
 						UserDAO.update(channel);
+					}
+					if(loggedInUser.getUserName().equals(channelName)) {
+						request.getSession().invalidate();
+						loggedInUser = null;
 					}
 					endStatus = "deleteSuccess";
 				}

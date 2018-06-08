@@ -9,7 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,6 +18,7 @@ import projectYT.model.Comment;
 import projectYT.model.Like;
 import projectYT.model.User;
 import projectYT.tools.DateConverter;
+import projectYT.tools.UserLogCheck;
 
 public class LikeCommentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -26,23 +26,22 @@ public class LikeCommentServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int commentId = Integer.parseInt(request.getParameter("commentId"));
 		Comment comment = CommentDAO.getCommentForId(commentId);
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 		
 		String status = request.getParameter("status");
 		boolean likeOrDislike = false;
 		if(status.equals("liked")) likeOrDislike= true;
 		
 		
-		Like likeExists = LikeDAO.commentLikedByUser(commentId, loggedInUser.getUserName());
-		String returnStatus = "";
+		
+		String returnStatus = "failed";
 		if(loggedInUser!=null && loggedInUser.getBlocked() != true) {
+			Like likeExists = LikeDAO.commentLikedByUser(commentId, loggedInUser.getUserName());
 			if(likeExists==null) {
 				Date likeDate = new Date();
 				int likeId =LikeDAO.getLikeId();
 				Like newLike = new Like(likeId, likeOrDislike, DateConverter.dateToStringForWrite(likeDate), null, comment, loggedInUser,false);
 				LikeDAO.addLikeDislike(newLike);
-				System.out.println("fail?");
 				System.out.println(newLike.getId()+"  "+comment.getId());
 				LikeDAO.addCommentLikeDislike(newLike.getId(),comment.getId());
 				if(likeOrDislike==false) {
@@ -86,18 +85,19 @@ public class LikeCommentServlet extends HttpServlet {
 				LikeDAO.updateLike(likeExists);
 				CommentDAO.updateComment(comment);
 			}
-			System.out.println("returnStatus: "+returnStatus);
-			Map<String, Object> data = new HashMap<>();
-			data.put("comment", comment);
-			data.put("status", returnStatus);
-			
-			ObjectMapper mapper = new ObjectMapper();
-			String jsonData = mapper.writeValueAsString(data);
-			System.out.println("Zavrseno ucitavanje video: " +jsonData);
 
-			response.setContentType("application/json");
-			response.getWriter().write(jsonData);
 		}
+		System.out.println("returnStatus: "+returnStatus);
+		Map<String, Object> data = new HashMap<>();
+		data.put("comment", comment);
+		data.put("status", returnStatus);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonData = mapper.writeValueAsString(data);
+		System.out.println("Zavrseno ucitavanje video: " +jsonData);
+
+		response.setContentType("application/json");
+		response.getWriter().write(jsonData);
 		
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

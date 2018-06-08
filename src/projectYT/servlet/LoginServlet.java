@@ -14,13 +14,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import projectYT.dao.UserDAO;
 import projectYT.model.User;
+import projectYT.tools.UserLogCheck;
 
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("user", loggedInUser);

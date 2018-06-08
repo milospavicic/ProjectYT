@@ -9,7 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,6 +16,7 @@ import projectYT.dao.UserDAO;
 import projectYT.dao.VideoDAO;
 import projectYT.model.User;
 import projectYT.model.Video;
+import projectYT.tools.UserLogCheck;
 
 
 public class GetVideosServlet extends HttpServlet {
@@ -24,9 +24,8 @@ public class GetVideosServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Ucitavanje videa zapoceto");
-		HttpSession session = request.getSession();
 		ArrayList<Video> videos= null;
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 		
 		if(loggedInUser!= null) {
 			System.out.println(loggedInUser.getUserName()+" - loggedInUser");

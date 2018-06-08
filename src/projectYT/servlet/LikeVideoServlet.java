@@ -9,7 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,6 +18,7 @@ import projectYT.model.Like;
 import projectYT.model.User;
 import projectYT.model.Video;
 import projectYT.tools.DateConverter;
+import projectYT.tools.UserLogCheck;
 
 public class LikeVideoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -26,14 +26,13 @@ public class LikeVideoServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int videoId = Integer.parseInt(request.getParameter("videoId"));
 		Video video = VideoDAO.getVideo(videoId);
-		HttpSession session = request.getSession();
-		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		User loggedInUser = UserLogCheck.findCurrentUser(request);
 		
 		String status = request.getParameter("status");
 		boolean likeOrDislike = false;
 		if(status.equals("liked")) likeOrDislike= true;
 		System.out.println(likeOrDislike);
-		String returnStatus = "";
+		String returnStatus = "failed";
 		if(loggedInUser!=null && loggedInUser.getBlocked() != true) {
 			Like likeExists = LikeDAO.videoLikedByUser(videoId, loggedInUser.getUserName());
 			if(likeExists==null) {

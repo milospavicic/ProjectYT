@@ -1,6 +1,8 @@
 var parameter="";
 $('document').ready(function(e){
 	parameter = window.location.search.slice(1).split('&')[0].split('=')[1];
+	parameter = parameter.replace("%20","%");
+	console.log(parameter);
     searchVideos(1);
     
     $(':checkbox').change(function() {
