@@ -16,7 +16,7 @@ $(document).ready(function(e) {
 	$.get('FollowUserServlet',{},function(dataOne){
 		$.get('VideoServlet',{"videoId":editVideoId},function(data){
 			if(data.video==null){
-				console.log("nullerino")
+				console.log("nullerino");
 				errorPage();
 				return;
 			}else{
@@ -32,6 +32,10 @@ $(document).ready(function(e) {
 				loggedInUser="false";
 			}
 			if(data.loggedInUser == null){
+				if(data.video.owner.blocked){
+					errorPage();
+					return;
+				}
 				if(data.video.blocked==true){
 					errorPage();
 					return;
@@ -44,6 +48,15 @@ $(document).ready(function(e) {
 		            $('#hideShowBtn').prop('disabled',true);
 				}
 			}else{
+				if(data.video.owner.blocked){
+					console.log("userBlocked");
+					if(data.video.owner.userName!=data.loggedInUser.userName){
+						if(data.loggedInUser.userType!="ADMIN" || data.loggedInUser.blocked==true){
+							errorPage();
+							return;
+						}
+					}
+				}
 				if(data.video.blocked==true){
 					$('#blockOptionVideo').hide();
 					videoBlocked = true;
@@ -436,7 +449,9 @@ function fillEditVideo(){
 	}
 	var video = currentVideo;
 	$('#editDescription').val(video.description);
-	$('#editPicUrl').val(video.pictureUrl);
+	if(video.pictureUrl!="pictures/noimage.jpg"){
+		$('#editPicUrl').val(video.pictureUrl);
+	}
 	if(video.visibility==("PUBLIC")){
 		console.log("its public");
 		$('#selectOne option[value=1]').attr('selected',true);
@@ -475,7 +490,7 @@ function saveEditVideo(){
 	var rating = $('#selectThree').val();
 	console.log(editVideoId);
 //	$.post('VideoServlet',{"status":"edit","videoId":editVideoId,"desc":desc,"picurl":picurl,"visib":visib,"comm":comm,"rating":rating},function(data){location.reload();});
-	
+	console.log(picurl);
 	$.post('VideoServlet',{"status":"edit","videoId":editVideoId,"desc":desc,"picurl":picurl,"visib":visib,"comm":comm,"rating":rating},function(data){
 		if(data.endStatus =="editSuccess"){
 			$('#editVideo-modal').hide()

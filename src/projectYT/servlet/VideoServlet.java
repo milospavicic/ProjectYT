@@ -86,7 +86,7 @@ public class VideoServlet extends HttpServlet {
 					int visib = Integer.parseInt(request.getParameter("visib"));
 					int comm = Integer.parseInt(request.getParameter("comm"));
 					int rating = Integer.parseInt(request.getParameter("rating"));
-
+					System.out.println(picurl);
 					videoForEdit.setDescription(desc);
 					videoForEdit.setPictureUrl(picurl);
 					if (visib == 1)

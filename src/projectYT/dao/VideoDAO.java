@@ -408,9 +408,9 @@ public class VideoDAO {
 		try {
 			if(userType==false) {
 				String query = "SELECT DISTINCT V.* FROM video AS V INNER JOIN users AS U ON V.owner=U.userName LEFT OUTER JOIN comment AS C ON V.id=C.videoId WHERE visibility = ? AND V.deleted = ? AND V.blocked = ? AND U.deleted = ? AND U.blocked = ? ";
-				
+				query+=" AND ( ";
 				if(vnC==true) {
-					query += " AND videoName LIKE ? ";
+					query += " videoName LIKE ? ";
 					System.out.println("and videoName");
 				}
 				if(onC==true) {
@@ -419,13 +419,13 @@ public class VideoDAO {
 						System.out.println("OR owner");
 					}
 					else {
-						query += " AND V.owner LIKE ? ";
+						query += " V.owner LIKE ? ";
 						System.out.println("and owner");
 					}
 				}
 				if(vC==true) {
 					if(onC==false && vnC==false){
-						query += " AND views LIKE ? ";
+						query += " views LIKE ? ";
 						System.out.println("and views");
 					}else {
 						query += " OR views LIKE ? ";
@@ -434,7 +434,7 @@ public class VideoDAO {
 				}
 				if(dC==true) {
 					if(onC==false && vnC==false && vC==false){
-						query += " AND V.datePosted LIKE ? ";
+						query += " V.datePosted LIKE ? ";
 						System.out.println("and datePosted");
 					}else {
 						query += " OR V.datePosted LIKE ? ";
@@ -443,13 +443,14 @@ public class VideoDAO {
 				}
 				if(cC==true) {
 					if(onC==false && vnC==false && vC==false && dC==false){
-						query += " AND C.text LIKE ? ";
+						query += " C.text LIKE ? ";
 						System.out.println("and text");
 					}else {
 						query += " OR C.text LIKE ? ";
 						System.out.println("OR text");
 					}
 				}
+				query += " ) ";
 				query += orderBy;
 				pstmt = conn.prepareStatement(query);
 				int index = 1;
@@ -621,10 +622,11 @@ public class VideoDAO {
 		Connection conn = ConnectionMenager.getConnection();
 		PreparedStatement pstmt = null;
 		try {
-			String query = "UPDATE video SET videoName = ?, description = ?, visibility = ?, commentsEnabled = ?, ratingEnabled = ?, blocked = ?, deleted = ?,views = ?, numberOfLikes = ?, numberOfDislikes = ?  WHERE id = ?";
+			String query = "UPDATE video SET videoName = ?, pictureUrl = ?, description = ?, visibility = ?, commentsEnabled = ?, ratingEnabled = ?, blocked = ?, deleted = ?,views = ?, numberOfLikes = ?, numberOfDislikes = ?  WHERE id = ?";
 			pstmt = conn.prepareStatement(query);
 			int index = 1;
 			pstmt.setString(index++, video.getVideoName());
+			pstmt.setString(index++, video.getPictureUrl());
 			pstmt.setString(index++, video.getDescription());
 			pstmt.setString(index++, video.getVisibility().toString());
 			pstmt.setBoolean(index++, video.isCommentsEnabled());

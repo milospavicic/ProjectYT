@@ -25,6 +25,7 @@ INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,
 INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('zoran','123','Zoran','Jovanovic','zoran@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
 INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('goran','123','Goran','Jovanovic','goran@gmail.com',null,'USER','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
 INSERT INTO users(userName,password,firstName,lastName,email,channelDescription,userType,registrationDate,profileUrl,lol) VALUES('123','123','Ime123','Prezime123','123@gmail.com',null,'admin','2018-4-4','http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',false);
+INSERT INTO `users` (`userName`,`password`,`firstName`,`lastName`,`email`,`channelDescription`,`userType`,`registrationDate`,`blocked`,`deleted`,`profileUrl`,`lol`) VALUES ('sake','sake123','Sandra','Stojanovic','email',NULL,'USER','2018-06-09',0,0,'https://imagesvc.timeincuk.net/v3/keystone/image?url=http://ksassets.timeincuk.net/wp/uploads/sites/46/2016/05/Best-Beauty-Cannes-Film-Festival-2016-Adriana-Lima--e1501163450723.jpg&q=82',0);
 
 CREATE TABLE subscribe(
 mainUser VARCHAR(15),
@@ -95,7 +96,7 @@ INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,c
 ,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/3BXDsVD6O10','https://e.snmc.io/lk/l/l/0c5f19d420aa434d0b86dbd872e08e24/6821082.jpg','Eminem - River (Audio) ft. Ed Sheeran',
 'Eminem\'s track "River" ft. Ed Sheeran is available on the album \'Revival,\' out now: http://shady.sr/Revival','PUBLIC',false,true,true,5523,522,8345,'2017-2-4','stanko',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
-,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0oIoR9mLwc','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWbta65PJ9nZFAC1O3sEA_qgt6xjJTvUXSSp2FZ4DH8pU7Btpo','Red Hot Chili Peppers - Dark Necessities [OFFICIAL VIDEO]',
+,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0oIoR9mLwc','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWbta65PJ9nZFAC1O3sEA_qgt6xjJTvUXSSp2FZ4DH8pU7Btpo','Red Hot Chili Peppers - Dark Necessities',
 'Watch the music video for “Dark Necessities” now! ','PUBLIC',false,true,true,1234,453,2351,'2017-1-4','stanko',false);
 
 
