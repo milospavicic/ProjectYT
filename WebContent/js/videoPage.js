@@ -32,6 +32,11 @@ $(document).ready(function(e) {
 				loggedInUser="false";
 			}
 			if(data.loggedInUser == null){
+				if(data.video.visibility == "PRIVATE"){
+					errorPage();
+					return;
+				}
+				
 				if(data.video.owner.blocked){
 					errorPage();
 					return;
@@ -48,6 +53,14 @@ $(document).ready(function(e) {
 		            $('#hideShowBtn').prop('disabled',true);
 				}
 			}else{
+				if(data.video.visibility == "PRIVATE"){
+					if(data.video.owner.userName!=data.loggedInUser.userName){
+						if(data.loggedInUser.userType!="ADMIN" || data.loggedInUser.blocked==true){
+							errorPage();
+							return;
+						}
+					}
+				}
 				if(data.video.owner.blocked){
 					console.log("userBlocked");
 					if(data.video.owner.userName!=data.loggedInUser.userName){

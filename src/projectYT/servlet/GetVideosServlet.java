@@ -16,6 +16,7 @@ import projectYT.dao.UserDAO;
 import projectYT.dao.VideoDAO;
 import projectYT.model.User;
 import projectYT.model.Video;
+import projectYT.model.User.UserType;
 import projectYT.tools.UserLogCheck;
 
 
@@ -29,7 +30,7 @@ public class GetVideosServlet extends HttpServlet {
 		
 		if(loggedInUser!= null) {
 			System.out.println(loggedInUser.getUserName()+" - loggedInUser");
-			if(loggedInUser.getUserType().toString().equals("ADMIN")) {
+			if(loggedInUser.getUserType() == UserType.ADMIN && loggedInUser.getBlocked()!=true) {
 				videos=VideoDAO.allVideos();
 			}
 			else {

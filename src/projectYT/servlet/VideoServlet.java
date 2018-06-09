@@ -43,7 +43,7 @@ public class VideoServlet extends HttpServlet {
 		Like likedVideo = null;
 		if (loggedInUser != null) {
 			likedVideo = LikeDAO.videoLikedByUser(videoId, loggedInUser.getUserName());
-			if (loggedInUser.getUserType() == UserType.ADMIN) {
+			if (loggedInUser.getUserType() == UserType.ADMIN && loggedInUser.getBlocked()!=true) {
 				recommended = VideoDAO.getRecommended(true,videoId);
 			} else {
 				recommended = VideoDAO.getRecommended(false,videoId);

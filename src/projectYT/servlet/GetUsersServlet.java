@@ -26,7 +26,7 @@ public class GetUsersServlet extends HttpServlet {
 		User loggedInUser = UserLogCheck.findCurrentUser(request);
 		
 		ArrayList<User> users = new ArrayList<>();
-		if(loggedInUser!=null && loggedInUser.getUserType()==UserType.ADMIN) {
+		if(loggedInUser!=null && loggedInUser.getUserType()==UserType.ADMIN && loggedInUser.getBlocked()!=true) {
 			String orderBy="";
 			int sort = Integer.parseInt(request.getParameter("sort"));
 			switch (sort) {
