@@ -77,5 +77,12 @@ public class Like {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
+
+	@Override
+	public String toString() {
+		return "Like [id=" + id + ", likeOrDislike=" + likeOrDislike + ", likeDate=" + likeDate + ", video=" + video
+				+ ", comment=" + comment + ", owner=" + owner + ", deleted=" + deleted + "]";
+	}
+	
 	
 }

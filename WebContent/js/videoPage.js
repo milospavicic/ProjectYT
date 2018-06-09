@@ -301,11 +301,9 @@ function loadComments(videoId,column,ascDsc){
 			newComment+='<a href="channelPage.html?channel='+data.comments[it].user.userName+'" id="commentOwner">'+data.comments[it].user.userName+'</a>'+
     				'<p id="commentDate">'+data.comments[it].datePosted+'</p>'+
     				'<div class="commentText"><p id="commentEdit'+data.comments[it].id+'">'+data.comments[it].text+'</p></div>'+
-    				'<button type="button" class="btn btn-default">Reply</button>'+
-    				'<p class="likes" id="rating'+data.comments[it].id+'">'+rating+'</p>'+
     				'<div class="btn-group" id="commLDBtnGroup">'+
-    				'<button type="button" class="btn btn-default" id="like'+data.comments[it].id+'" onclick="commLike('+data.comments[it].id+')"><span class="glyphicon glyphicon-thumbs-up"></span></button>'+
-    				'<button type="button" class="btn btn-default" id="dislike'+data.comments[it].id+'" onclick="commDislike('+data.comments[it].id+')"><span class="glyphicon glyphicon-thumbs-down"></span></button>';
+    				'<button type="button" class="btn btn-default" id="like'+data.comments[it].id+'" onclick="commLike('+data.comments[it].id+')"><span class="glyphicon glyphicon-thumbs-up"></span> '+data.comments[it].likeNumber+'</button>'+
+    				'<button type="button" class="btn btn-default" id="dislike'+data.comments[it].id+'" onclick="commDislike('+data.comments[it].id+')"><span class="glyphicon glyphicon-thumbs-down"></span> '+data.comments[it].dislikeNumber+'</button>';
     		if(loggedInUser!="false" && loggedInUser.blocked!=true){
     			if(loggedInUser.userType == "ADMIN" || data.comments[it].user.userName==loggedInUser.userName){
         			newComment+='<button type="button" class="btn btn-default" id="edit'+data.comments[it].id+'" onclick="editComment('+data.comments[it].id+',\''+data.comments[it].text+'\')"><span class="glyphicon glyphicon-edit"></span></button>'+
@@ -393,13 +391,13 @@ function commLike(commId){
 			$('#failModal').modal();
 		}else if(data.status=="neutral"){
 			setCommentButtonsDefault(data.comment.id);
-			setCommentRating();
+			setCommentRating(data.comment);
 		}else if(data.status=="like"){
 			setCommentLikeActive(data.comment.id);
-			setCommentRating();
+			setCommentRating(data.comment);
 		}else{
 			setCommentDislikeActive(data.comment.id);
-			setCommentRating();
+			setCommentRating(data.comment);
 		}
 	});
 }
@@ -417,17 +415,15 @@ function commDislike(commId){
 		return;
 	}
 	$.get('LikeCommentServlet',{"commentId":commId,"status":"disliked"},function(data){
+		setCommentRating(data.comment);
 		if(data.status=="failed"){
 			$('#failModal').modal();
 		}else if(data.status=="neutral"){
 			setCommentButtonsDefault(data.comment.id);
-			setCommentRating(data.comment);
 		}else if(data.status=="like"){
 			setCommentLikeActive(data.comment.id);
-			setCommentRating(data.comment);
 		}else{
 			setCommentDislikeActive(data.comment.id);
-			setCommentRating(data.comment);
 		}
 	});
 	
@@ -539,9 +535,12 @@ function setCommentDislikeActive(commId){
 	$('#dislike'+commId+'').addClass("btn btn-danger");
 }
 function setCommentRating(comment){
+	console.log("setCommentRating, before if");
 	if(comment!=null){
-		var rating = comment.likeNumber-comment.dislikeNumber;
-		$('#rating'+comment.id+'').html(rating);
+	    var likes ='<span class="glyphicon glyphicon-thumbs-up"></span> '+comment.likeNumber;
+	    var dislikes ='<span class="glyphicon glyphicon-thumbs-down"></span> '+comment.dislikeNumber;
+		$('#like'+comment.id+'').html(likes);
+		$('#dislike'+comment.id+'').html(dislikes);
 	}
 	
 }

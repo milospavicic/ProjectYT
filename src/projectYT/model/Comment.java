@@ -71,5 +71,12 @@ public class Comment {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
+	@Override
+	public String toString() {
+		return "Comment [id=" + id + ", text=" + text + ", datePosted=" + datePosted + ", user=" + user + ", video="
+				+ video + ", likeNumber=" + likeNumber + ", dislikeNumber=" + dislikeNumber + ", deleted=" + deleted
+				+ "]";
+	}
+	
 	
 }

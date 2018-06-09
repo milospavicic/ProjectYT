@@ -32,17 +32,15 @@ public class LikeCommentServlet extends HttpServlet {
 		boolean likeOrDislike = false;
 		if(status.equals("liked")) likeOrDislike= true;
 		
-		
-		
 		String returnStatus = "failed";
 		if(loggedInUser!=null && loggedInUser.getBlocked() != true) {
 			Like likeExists = LikeDAO.commentLikedByUser(commentId, loggedInUser.getUserName());
+			System.out.println("likeExists: "+likeExists);
 			if(likeExists==null) {
 				Date likeDate = new Date();
 				int likeId =LikeDAO.getLikeId();
 				Like newLike = new Like(likeId, likeOrDislike, DateConverter.dateToStringForWrite(likeDate), null, comment, loggedInUser,false);
 				LikeDAO.addLikeDislike(newLike);
-				System.out.println(newLike.getId()+"  "+comment.getId());
 				LikeDAO.addCommentLikeDislike(newLike.getId(),comment.getId());
 				if(likeOrDislike==false) {
 					int tempDis = comment.getDislikeNumber();
@@ -57,26 +55,32 @@ public class LikeCommentServlet extends HttpServlet {
 			}else {
 				if(likeOrDislike==false) {
 					if(likeExists.isLikeOrDislike()==true) {
+						System.out.println("like+dis");
 						int tempDis = comment.getDislikeNumber();
 						comment.setDislikeNumber(tempDis+1);
 						int tempLikes = comment.getLikeNumber();
 						comment.setLikeNumber(tempLikes-1);
 						returnStatus = "dislike";
 					}else{
+						System.out.println("dis+dis");
 						int tempDis = comment.getDislikeNumber();
 						comment.setDislikeNumber(tempDis-1);
+						LikeDAO.deleteLikeCommentComplete(commentId, likeExists.getId());
 						returnStatus = "neutral";
 					}
 				}else {
-					if(likeExists.isLikeOrDislike()==true) {
+					if(likeExists.isLikeOrDislike()==false) {
+						System.out.println("dis+like");
 						int tempDis = comment.getDislikeNumber();
 						comment.setDislikeNumber(tempDis-1);
 						int tempLikes = comment.getLikeNumber();
 						comment.setLikeNumber(tempLikes+1);
 						returnStatus = "like";
 					}else {
+						System.out.println("like+like");
 						int tempLikes = comment.getLikeNumber();
 						comment.setLikeNumber(tempLikes-1);
+						LikeDAO.deleteLikeCommentComplete(commentId, likeExists.getId());
 						returnStatus = "neutral";
 					}
 					
@@ -87,14 +91,15 @@ public class LikeCommentServlet extends HttpServlet {
 			}
 
 		}
-		System.out.println("returnStatus: "+returnStatus);
+		System.out.println("\nreturnStatus: "+returnStatus);
+		System.out.println("returnComment: "+comment+"\n");
 		Map<String, Object> data = new HashMap<>();
 		data.put("comment", comment);
 		data.put("status", returnStatus);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonData = mapper.writeValueAsString(data);
-		System.out.println("Zavrseno ucitavanje video: " +jsonData);
+		System.out.println("LikeCommentServletGotov: " +jsonData);
 
 		response.setContentType("application/json");
 		response.getWriter().write(jsonData);

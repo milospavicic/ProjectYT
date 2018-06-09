@@ -163,8 +163,8 @@ public class LikeDAO {
 		deleteVideoLike(videoId,likeId);
 		deleteLike(likeId);
 	}
-	public static void deleteLikeCommentComplete(int videoId,int likeId) {
-		deleteCommentLike(videoId,likeId);
+	public static void deleteLikeCommentComplete(int commentId,int likeId) {
+		deleteCommentLike(commentId,likeId);
 		deleteLike(likeId);
 	}
 	public static boolean deleteLike(int likeId) {
@@ -214,7 +214,7 @@ public class LikeDAO {
 		}
 		return false;
 	}
-	public static boolean deleteCommentLike(int videoId, int likeId) {
+	public static boolean deleteCommentLike(int commentId, int likeId) {
 		Connection conn = ConnectionMenager.getConnection();
 		PreparedStatement pstmt = null;
 		try {
@@ -222,7 +222,7 @@ public class LikeDAO {
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, true);
 			pstmt.setInt(2, likeId);
-			pstmt.setInt(3, videoId);
+			pstmt.setInt(3, commentId);
 			
 			return pstmt.executeUpdate() == 1;
 		} catch (Exception ex) {
