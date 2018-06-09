@@ -61,18 +61,22 @@ public class CommentsServlet extends HttpServlet {
 		case "new":
 			try {
 				if (loggedInUser != null && loggedInUser.getBlocked() != true) {
-					String commentText = request.getParameter("commentText");
-					if(commentText.equals("")) {
-						return;
-					}
 					int videoId = Integer.parseInt(request.getParameter("videoId"));
 					Video video = VideoDAO.getVideo(videoId);
-					int newId = CommentDAO.getCommentId();
-					Date newDate = new Date();
-					String datePosted = DateConverter.dateToStringForWrite(newDate);
-					Comment newCommet = new Comment(newId, commentText, datePosted, loggedInUser, video, 0, 0, false);
-					CommentDAO.addComment(newCommet);
-					endStatus="newSuccess";
+					if(video.isCommentsEnabled()==true || loggedInUser.getUserType() == UserType.ADMIN || loggedInUser.getUserName().equals(video.getOwner().getUserName())) {
+						String commentText = request.getParameter("commentText");
+						if(commentText.equals("")) {
+							return;
+						}
+
+						int newId = CommentDAO.getCommentId();
+						Date newDate = new Date();
+						String datePosted = DateConverter.dateToStringForWrite(newDate);
+						Comment newCommet = new Comment(newId, commentText, datePosted, loggedInUser, video, 0, 0, false);
+						CommentDAO.addComment(newCommet);
+						endStatus="newSuccess";
+					}
+
 				}
 			}catch (Exception e) {
 				endStatus="newFailed";

@@ -16,6 +16,7 @@ import projectYT.dao.LikeDAO;
 import projectYT.dao.VideoDAO;
 import projectYT.model.Like;
 import projectYT.model.User;
+import projectYT.model.User.UserType;
 import projectYT.model.Video;
 import projectYT.tools.DateConverter;
 import projectYT.tools.UserLogCheck;
@@ -34,61 +35,63 @@ public class LikeVideoServlet extends HttpServlet {
 		System.out.println(likeOrDislike);
 		String returnStatus = "failed";
 		if(loggedInUser!=null && loggedInUser.getBlocked() != true) {
-			Like likeExists = LikeDAO.videoLikedByUser(videoId, loggedInUser.getUserName());
-			if(likeExists==null) {
-				System.out.println("newLike: "+likeOrDislike);
-				Date likeDate = new Date();
-				int likeId =LikeDAO.getLikeId();
-				Like newLike = new Like(likeId, likeOrDislike, DateConverter.dateToStringForWrite(likeDate), video, null, loggedInUser,false);
-				LikeDAO.addLikeDislike(newLike);
-				System.out.println("???");
-				LikeDAO.addVideoLikeDislike(newLike.getId(),video.getId());
-				if(likeOrDislike==false) {
-					int tempDis = video.getNumberOfDislikes();
-					video.setNumberOfDislikes(tempDis+1);
-					returnStatus = "dislike";
-				}else {
-					int tempLikes = video.getNumberOfLikes();
-					video.setNumberOfLikes(tempLikes+1);
-					returnStatus = "like";
-				}
-				VideoDAO.updateVideo(video);
-			}
-			else {
-				if(likeOrDislike==false) {
-					if(likeExists.isLikeOrDislike()==true) {
-						System.out.println("dislike was like");
-						int tempLikes = video.getNumberOfLikes();
-						video.setNumberOfLikes(tempLikes-1);
+			if(video.isRatingEnabled()==true || loggedInUser.getUserType() == UserType.ADMIN || loggedInUser.getUserName().equals(video.getOwner().getUserName())) {
+				Like likeExists = LikeDAO.videoLikedByUser(videoId, loggedInUser.getUserName());
+				if(likeExists==null) {
+					System.out.println("newLike: "+likeOrDislike);
+					Date likeDate = new Date();
+					int likeId =LikeDAO.getLikeId();
+					Like newLike = new Like(likeId, likeOrDislike, DateConverter.dateToStringForWrite(likeDate), video, null, loggedInUser,false);
+					LikeDAO.addLikeDislike(newLike);
+					System.out.println("???");
+					LikeDAO.addVideoLikeDislike(newLike.getId(),video.getId());
+					if(likeOrDislike==false) {
 						int tempDis = video.getNumberOfDislikes();
 						video.setNumberOfDislikes(tempDis+1);
 						returnStatus = "dislike";
 					}else {
-						System.out.println("dislike was dislike");
-						int tempDis = video.getNumberOfDislikes();
-						video.setNumberOfDislikes(tempDis-1);
-						LikeDAO.deleteLikeVideoComplete(videoId, likeExists.getId());
-						returnStatus = "neutral";
-					}
-				}else {
-					if(likeExists.isLikeOrDislike()==false) {
-						System.out.println("like was dislike");
-						int tempDis = video.getNumberOfDislikes();
-						video.setNumberOfDislikes(tempDis-1);
 						int tempLikes = video.getNumberOfLikes();
 						video.setNumberOfLikes(tempLikes+1);
 						returnStatus = "like";
-					}else {
-						System.out.println("like was like");
-						int tempLikes = video.getNumberOfLikes();
-						video.setNumberOfLikes(tempLikes-1);
-						LikeDAO.deleteLikeVideoComplete(videoId, likeExists.getId());
-						returnStatus = "neutral";
 					}
+					VideoDAO.updateVideo(video);
 				}
-				likeExists.setLikeOrDislike(likeOrDislike);
-				LikeDAO.updateLike(likeExists);
-				VideoDAO.updateVideo(video);
+				else {
+					if(likeOrDislike==false) {
+						if(likeExists.isLikeOrDislike()==true) {
+							System.out.println("dislike was like");
+							int tempLikes = video.getNumberOfLikes();
+							video.setNumberOfLikes(tempLikes-1);
+							int tempDis = video.getNumberOfDislikes();
+							video.setNumberOfDislikes(tempDis+1);
+							returnStatus = "dislike";
+						}else {
+							System.out.println("dislike was dislike");
+							int tempDis = video.getNumberOfDislikes();
+							video.setNumberOfDislikes(tempDis-1);
+							LikeDAO.deleteLikeVideoComplete(videoId, likeExists.getId());
+							returnStatus = "neutral";
+						}
+					}else {
+						if(likeExists.isLikeOrDislike()==false) {
+							System.out.println("like was dislike");
+							int tempDis = video.getNumberOfDislikes();
+							video.setNumberOfDislikes(tempDis-1);
+							int tempLikes = video.getNumberOfLikes();
+							video.setNumberOfLikes(tempLikes+1);
+							returnStatus = "like";
+						}else {
+							System.out.println("like was like");
+							int tempLikes = video.getNumberOfLikes();
+							video.setNumberOfLikes(tempLikes-1);
+							LikeDAO.deleteLikeVideoComplete(videoId, likeExists.getId());
+							returnStatus = "neutral";
+						}
+					}
+					likeExists.setLikeOrDislike(likeOrDislike);
+					LikeDAO.updateLike(likeExists);
+					VideoDAO.updateVideo(video);
+				}
 			}
 		}
 		System.out.println("returnStatus: "+returnStatus);

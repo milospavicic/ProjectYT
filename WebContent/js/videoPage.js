@@ -84,12 +84,15 @@ $(document).ready(function(e) {
 				}else{
 					$('#unblockOptionVideo').hide();
 				}
-				if(data.video.ratingEnabled==false && data.loggedInUser.userType!="ADMIN"){
-					$('#ldBtnGroup').hide();
+				if(data.video.ratingEnabled==false){
+					if(data.loggedInUser.userType!="ADMIN" || data.loggedInUser.blocked==true)
+						$('#ldBtnGroup').hide();
 				}
-				if(data.video.commentsEnabled==false && data.loggedInUser.userType!="ADMIN"){
-		            $('#myCommentButton').prop('disabled',true);
-		            $('#hideShowBtn').prop('disabled',true);
+				if(data.video.commentsEnabled==false){
+					if(data.loggedInUser.userType!="ADMIN" || data.loggedInUser.blocked==true){
+						$('#myCommentButton').prop('disabled',true);
+			            $('#hideShowBtn').prop('disabled',true);
+					}
 				}
 				
 				console.log(data.video.owner.userName+"  "+data.loggedInUser.userName)
