@@ -397,7 +397,7 @@ function refreshComments() {
 		loadComments(videoId,"(likeNumber-dislikeNumber)","DESC");
 	}
 	else if(option=="LP"){
-		loadComments(videoId,"(likeNumber-dislikeNumber)","DESC");
+		loadComments(videoId,"(likeNumber-dislikeNumber)","ASC");
 	}else{
 	    loadComments(videoId,"id",option);
 	}

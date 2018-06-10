@@ -115,17 +115,81 @@ FOREIGN KEY (videoId) REFERENCES video(id) ON DELETE RESTRICT
 );
 
 INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
-VALUES('Best movie','marko',1,'2017-2-2',7,4,false);
+VALUES('Best movie','marko',2,'2017-2-2',7,4,false);
 INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
-VALUES('woow','pera',1,'2017-5-5',6,2,false);
+VALUES('woow','pera',2,'2017-5-5',6,2,false);
 INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
-VALUES('Cool','stanko',1,'2017-7-7',5,2,false);
+VALUES('Cool','stanko',2,'2017-7-7',5,2,false);
 INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
-VALUES('Lame','marko',1,'2017-9-9',2,1,false);
+VALUES('Lame','marko',2,'2017-9-9',2,1,false);
 INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
-VALUES('So lamee','goran',1,'2018-1-1',4,2,false);
+VALUES('So lamee','goran',2,'2018-1-1',4,2,false);
 
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Best movie','marko',3,'2017-2-2',7,4,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('woow','pera',3,'2017-5-5',6,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Cool','stanko',3,'2017-7-7',5,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Lame','marko',3,'2017-9-9',2,1,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('So lamee','goran',3,'2018-1-1',4,2,false);
 
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Best movie','marko',4,'2017-2-2',7,4,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('woow','pera',4,'2017-5-5',6,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Cool','stanko',4,'2017-7-7',5,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Lame','marko',4,'2017-9-9',2,1,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('So lamee','goran',4,'2018-1-1',4,2,false);
+
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Best movie','marko',5,'2017-2-2',7,4,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('woow','pera',5,'2017-5-5',6,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Cool','stanko',5,'2017-7-7',5,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Lame','marko',5,'2017-9-9',2,1,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('So lamee','goran',5,'2018-1-1',4,2,false);
+
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Best movie','marko',6,'2017-2-2',7,4,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('woow','pera',6,'2017-5-5',6,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Cool','stanko',6,'2017-7-7',5,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Lame','marko',6,'2017-9-9',2,1,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('So lamee','goran',6,'2018-1-1',4,2,false);
+
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Best movie','marko',7,'2017-2-2',7,4,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('woow','pera',7,'2017-5-5',6,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Cool','stanko',7,'2017-7-7',5,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Lame','marko',7,'2017-9-9',2,1,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('So lamee','goran',7,'2018-1-1',4,2,false);
+
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Best movie','marko',8,'2017-2-2',7,4,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('woow','pera',8,'2017-5-5',6,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Cool','stanko',8,'2017-7-7',5,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Lame','marko',8,'2017-9-9',2,1,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('So lamee','goran',8,'2018-1-1',4,2,false);
 
 
 CREATE TABLE likeDislike(
