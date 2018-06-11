@@ -1,6 +1,8 @@
 $(document).ready(function(e) {
+	console.log("index.js");
 	var videosDiv = $('#recommendedDiv .row');
 	$.get('GetVideosServlet',{},function(data){
+		console.log("GetVideosServlet");
 		var counter = 1;
 		for(it in data.videos){
 			if(counter>6) break;

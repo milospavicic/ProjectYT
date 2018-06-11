@@ -17,7 +17,7 @@ public class LikeDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
-			String query = "SELECT MAX(id) FROM likeDislike";
+			String query = "SELECT MAX(id) FROM likedislike";
 			pstmt = conn.prepareStatement(query);
 			rset = pstmt.executeQuery();
 		
@@ -91,7 +91,7 @@ public class LikeDAO {
 
 		PreparedStatement pstmt = null;
 		try {
-			String query = "INSERT INTO likeDislike(liked,likeDate,owner,deleted) VALUES(?, ?, ?,?)";
+			String query = "INSERT INTO likedislike(liked,likeDate,owner,deleted) VALUES(?, ?, ?,?)";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, likeDislike.isLikeOrDislike());
 			Date myDate=DateConverter.stringToDateForWrite(likeDislike.getLikeDate());
@@ -119,7 +119,7 @@ public class LikeDAO {
 		Connection conn = ConnectionMenager.getConnection();
 		PreparedStatement pstmt = null;
 		try {
-			String query="INSERT INTO likeDislikeVideo(likeId,videoId,deleted) VALUES(?, ?, ?)";
+			String query="INSERT INTO likedislikevideo(likeId,videoId,deleted) VALUES(?, ?, ?)";
 			pstmt=conn.prepareStatement(query);
 			pstmt.setInt(1, likeId);
 			pstmt.setInt(2, videoId);
@@ -140,7 +140,7 @@ public class LikeDAO {
 		Connection conn = ConnectionMenager.getConnection();
 		PreparedStatement pstmt = null;
 		try {
-			String query = "UPDATE likeDislike SET liked = ? WHERE id = ?";
+			String query = "UPDATE likedislike SET liked = ? WHERE id = ?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, l.isLikeOrDislike());
 			pstmt.setInt(2, l.getId());
@@ -171,7 +171,7 @@ public class LikeDAO {
 		Connection conn = ConnectionMenager.getConnection();
 		PreparedStatement pstmt = null;
 		try {
-			String query = "UPDATE likeDislike SET deleted = ? WHERE id = ?";
+			String query = "UPDATE likedislike SET deleted = ? WHERE id = ?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setBoolean(1, true);
 			pstmt.setInt(2, likeId);
@@ -285,7 +285,7 @@ public class LikeDAO {
 		PreparedStatement pstmt = null;
 		try {
 			
-			String query="INSERT INTO likeDislikeComment(likeId,commentId,deleted) VALUES(?, ?, ?)";
+			String query="INSERT INTO likedislikecomment(likeId,commentId,deleted) VALUES(?, ?, ?)";
 			pstmt=conn.prepareStatement(query);
 			pstmt.setInt(1, id);
 			pstmt.setInt(2, id2);

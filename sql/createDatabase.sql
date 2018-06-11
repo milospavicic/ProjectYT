@@ -1,6 +1,6 @@
-DROP SCHEMA IF EXISTS ProjectYT;
-CREATE SCHEMA ProjectYT DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE ProjectYT;
+DROP SCHEMA IF EXISTS projectYT;
+CREATE SCHEMA projectYT DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE projectYT;
 
 CREATE TABLE users(
 userName VARCHAR(15) NOT NULL,
@@ -82,7 +82,7 @@ INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,c
 Cast: Andy Serkis, Woody Harrelson, Steve Zahn, Amiah Miller, Karin Konoval, Judy Greer and Terry Notary','PUBLIC',false,true,true,124,11,22314,'2018-4-4','marko',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
 ,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/6ZfuNTqbHE8','https://pixel.nymag.com/imgs/daily/vulture/2018/03/20/avenger/20-avengers-lede.w710.h473.jpg','Marvel Studios\' Avengers: Infinity War Official Trailer',
-'"There was an idea…" Avengers: Infinity War. In theaters April 27.','PUBLIC',false,true,true,4142,121,5451,'2018-2-4','marko',false);
+'"There was an ideaï¿½" Avengers: Infinity War. In theaters April 27.','PUBLIC',false,true,true,4142,121,5451,'2018-2-4','marko',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
 ,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/MWRUNTLisPo','https://i.ytimg.com/vi/31lEwIF6AcI/maxresdefault.jpg','DOCTOR STRANGE Official Trailer (Marvel - 2016 )',
 'After his career is destroyed, a brilliant but arrogant and conceited surgeon gets a new lease on life when a sorcerer takes him under his wing and trains him to defend the world against evil. ','PRIVATE',false,true,true,412,82,1251,'2018-1-4','marko',false);
@@ -97,7 +97,7 @@ INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,c
 'Eminem\'s track "River" ft. Ed Sheeran is available on the album \'Revival,\' out now: http://shady.sr/Revival','PUBLIC',false,true,true,5523,522,8345,'2017-2-4','stanko',false);
 INSERT INTO video(videoUrl,pictureUrl,videoName,description,visibility,blocked,commentsEnabled,ratingEnabled,numberOfLikes
 ,numberOfDislikes,views,datePosted,owner,deleted) VALUES('https://www.youtube.com/embed/Q0oIoR9mLwc','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWbta65PJ9nZFAC1O3sEA_qgt6xjJTvUXSSp2FZ4DH8pU7Btpo','Red Hot Chili Peppers - Dark Necessities',
-'Watch the music video for “Dark Necessities” now! ','PUBLIC',false,true,true,1234,453,2351,'2017-1-4','stanko',false);
+'Watch the music video for ï¿½Dark Necessitiesï¿½ now! ','PUBLIC',false,true,true,1234,453,2351,'2017-1-4','stanko',false);
 
 
 CREATE TABLE comment(
@@ -203,7 +203,7 @@ INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,delet
 VALUES('So lamee','goran',8,'2018-1-1',4,2,false);
 
 
-CREATE TABLE likeDislike(
+CREATE TABLE likedislike(
 id BIGINT AUTO_INCREMENT,
 liked BOOLEAN NOT NULL,
 likeDate DATE NOT NULL,
@@ -212,43 +212,43 @@ deleted BOOLEAN,
 PRIMARY KEY (id),
 FOREIGN KEY (owner) REFERENCES users(userName) ON DELETE RESTRICT
 );
-INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+INSERT INTO likedislike(liked,likeDate,owner,deleted)
 VALUES(true,'2018-2-5','marko',false);
-INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+INSERT INTO likedislike(liked,likeDate,owner,deleted)
 VALUES(true,'2018-2-3','darko',false);
-INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+INSERT INTO likedislike(liked,likeDate,owner,deleted)
 VALUES(true,'2018-2-1','pera',false);
-INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+INSERT INTO likedislike(liked,likeDate,owner,deleted)
 VALUES(true,'2017-9-5','stanko',false);
-INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+INSERT INTO likedislike(liked,likeDate,owner,deleted)
 VALUES(true,'2017-4-5','marko',false);
-INSERT INTO likeDislike(liked,likeDate,owner,deleted)
+INSERT INTO likedislike(liked,likeDate,owner,deleted)
 VALUES(true,'2013-2-5','pera',false);
 ---------------------------------------------
-CREATE TABLE likeDislikeVideo(
+CREATE TABLE likedislikevideo(
 likeId BIGINT,
 videoId BIGINT,
 deleted BOOLEAN,
-FOREIGN KEY (likeId) REFERENCES likeDislike (id) ON DELETE RESTRICT,
+FOREIGN KEY (likeId) REFERENCES likedislike (id) ON DELETE RESTRICT,
 FOREIGN KEY (videoId) REFERENCES video(id) ON DELETE RESTRICT
 );
-INSERT INTO likeDislikeVideo(likeId,videoId,deleted)
+INSERT INTO likedislikevideo(likeId,videoId,deleted)
 VALUES(1,1,false);
-INSERT INTO likeDislikeVideo(likeId,videoId,deleted)
+INSERT INTO likedislikevideo(likeId,videoId,deleted)
 VALUES(2,1,false);
-INSERT INTO likeDislikeVideo(likeId,videoId,deleted)
+INSERT INTO likedislikevideo(likeId,videoId,deleted)
 VALUES(3,2,false);
-INSERT INTO likeDislikeVideo(likeId,videoId,deleted)
+INSERT INTO likedislikevideo(likeId,videoId,deleted)
 VALUES(4,2,false);
 
-CREATE TABLE likeDislikeComment(
+CREATE TABLE likedislikecomment(
 likeId BIGINT,
 commentId BIGINT,
 deleted BOOLEAN,
-FOREIGN KEY (likeId) REFERENCES likeDislike (id) ON DELETE RESTRICT,
+FOREIGN KEY (likeId) REFERENCES likedislike (id) ON DELETE RESTRICT,
 FOREIGN KEY (commentId) REFERENCES comment (id) ON DELETE RESTRICT
 );
-INSERT INTO likeDislikeComment(likeId,commentId,deleted)
+INSERT INTO likedislikecomment(likeId,commentId,deleted)
 VALUES(5,1,false);
-INSERT INTO likeDislikeComment(likeId,commentId,deleted)
+INSERT INTO likedislikecomment(likeId,commentId,deleted)
 VALUES(6,1,false);

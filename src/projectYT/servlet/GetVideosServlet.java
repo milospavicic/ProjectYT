@@ -27,7 +27,7 @@ public class GetVideosServlet extends HttpServlet {
 		System.out.println("Ucitavanje videa zapoceto");
 		ArrayList<Video> videos= null;
 		User loggedInUser = UserLogCheck.findCurrentUser(request);
-		
+		System.out.println("ALOOO");
 		if(loggedInUser!= null) {
 			System.out.println(loggedInUser.getUserName()+" - loggedInUser");
 			if(loggedInUser.getUserType() == UserType.ADMIN && loggedInUser.getBlocked()!=true) {
