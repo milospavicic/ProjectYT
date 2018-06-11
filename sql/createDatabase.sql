@@ -115,6 +115,17 @@ FOREIGN KEY (videoId) REFERENCES video(id) ON DELETE RESTRICT
 );
 
 INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Best movie','marko',1,'2017-2-2',7,4,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('woow','pera',1,'2017-5-5',6,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Cool','stanko',1,'2017-7-7',5,2,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('Lame','marko',1,'2017-9-9',2,1,false);
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
+VALUES('So lamee','goran',1,'2018-1-1',4,2,false);
+
+INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
 VALUES('Best movie','marko',2,'2017-2-2',7,4,false);
 INSERT INTO comment(text,owner,videoId,datePosted,likeNumber,dislikeNumber,deleted)
 VALUES('woow','pera',2,'2017-5-5',6,2,false);
